@@ -33,10 +33,10 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--pantry-b
 .portal-title{font-family:'DM Serif Display',serif;font-size:clamp(28px,5vw,48px);font-weight:400;color:var(--text);line-height:1.2;margin-bottom:12px;}
 .portal-title span{color:var(--pantry-green);font-style:italic;}
 .portal-sub{font-size:14px;color:var(--text-muted);max-width:380px;margin:0 auto;line-height:1.6;}
-.portal-stats{display:flex;gap:32px;margin-top:20px;justify-content:center;}
-.pstat{text-align:center;}
-.pstat-num{font-family:'DM Serif Display',serif;font-size:22px;color:var(--pantry-green);}
-.pstat-lbl{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;}
+.portal-stats{display:flex;gap:20px;margin-top:28px;justify-content:center;flex-wrap:wrap;}
+.pstat{text-align:center;background:rgba(255,255,255,0.92);border-radius:12px;padding:14px 22px;border:1.5px solid rgba(45,122,69,0.15);min-width:130px;}
+.pstat-num{font-family:'DM Serif Display',serif;font-size:26px;color:var(--pantry-green);font-weight:400;}
+.pstat-lbl{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;}
 
 .cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;width:100%;animation:fadeUp .6s .15s ease both;}
 .card{position:relative;background:var(--white);border-radius:20px;padding:32px 28px;text-decoration:none;color:inherit;border:1.5px solid rgba(0,0,0,0.06);box-shadow:0 4px 20px rgba(0,0,0,0.05);transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s ease,border-color .25s ease;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:18px;text-align:center;}
@@ -153,6 +153,10 @@ tr:hover td{background:#fafcfa;}
 .bar-wrap:hover .bar{opacity:1;}
 .bar-label{font-size:10px;color:var(--text-muted);}
 
+.card-qb .card-accent{background:linear-gradient(90deg,#2ca01c,#4dc73a);}
+.card-qb .card-icon{background:#edf9eb;color:#2ca01c;}
+.card-qb .card-label{color:#2ca01c;}
+.card-qb .card-arrow{background:linear-gradient(135deg,#2ca01c,#4dc73a);color:#fff;box-shadow:0 4px 12px rgba(44,160,28,0.3);}
 /* MAP STOPS */
 .stop-row{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--white);border-radius:8px;border:1px solid var(--border);margin-bottom:8px;}
 .stop-num{width:24px;height:24px;border-radius:50%;background:var(--pantry-green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;}
@@ -261,6 +265,17 @@ tr:hover td{background:#fafcfa;}
         </div>
         <div class="card-arrow">Open module →</div>
       </div>
+      <!-- QuickBooks -->
+      <div class="card card-qb" onclick="openSection('quickbooks')">
+        <div class="card-accent"></div>
+        <div class="card-icon">💼</div>
+        <div>
+          <div class="card-label">Financial Integration</div>
+          <div class="card-title">QuickBooks Sync</div>
+          <div class="card-desc">Connect donations, grants, and expenses directly to your QuickBooks account. Auto-reconcile.</div>
+        </div>
+        <div class="card-arrow">Open module →</div>
+      </div>
       <!-- Reports -->
       <div class="card card-rpt" onclick="openSection('reports')">
         <div class="card-accent"></div>
@@ -341,6 +356,14 @@ const SECTIONS = {
     data: getVolunteerData,
     upload: getVolunteerUpload,
     report: getVolunteerReport,
+  },
+  quickbooks: {
+    name: 'QuickBooks Sync',
+    color: '#2ca01c',
+    overview: getQBOverview,
+    data: getQBData,
+    upload: getQBUpload,
+    report: getQBReport,
   },
   reports: {
     name: 'Reports & Board Docs',
@@ -891,29 +914,28 @@ function simulateUpload(section) {
 }
 
 function generateBoardReport() {
+  // Show generation progress modal first, then reveal full report
   showModal(`
     <div class="modal-title">Generating Board Report Packet</div>
-    <div class="modal-sub">Pulling FY2025 data across all modules and building your board presentation.</div>
+    <div class="modal-sub">Pulling FY2025 data across all modules...</div>
     <div class="modal-progress"><div class="modal-progress-bar" id="prog-bar" style="width:0%"></div></div>
     <div class="modal-steps" id="modal-steps">
       <div class="modal-step"><div class="step-circle step-active" id="s1">1</div><span>Compiling Grocery Rescue data</span></div>
-      <div class="modal-step"><div class="step-circle step-pending" id="s2">2</div><span>Compiling Mobile Pantry routes</span></div>
+      <div class="modal-step"><div class="step-circle step-pending" id="s2">2</div><span>Compiling Mobile Pantry & Pantry Pack data</span></div>
       <div class="modal-step"><div class="step-circle step-pending" id="s3">3</div><span>Calculating YoY comparisons</span></div>
-      <div class="modal-step"><div class="step-circle step-pending" id="s4">4</div><span>Formatting PDF board packet</span></div>
-      <div class="modal-step"><div class="step-circle step-pending" id="s5">5</div><span>Sending to board member emails</span></div>
+      <div class="modal-step"><div class="step-circle step-pending" id="s4">4</div><span>Formatting 18-page board packet</span></div>
     </div>
-    <div id="modal-done" style="display:none;text-align:center;padding:12px 0;">
-      <div style="font-size:32px;margin-bottom:8px;">🗒️</div>
-      <div style="font-size:15px;font-weight:600;margin-bottom:4px;">Board Report Ready!</div>
-      <div style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">18-page PDF generated and emailed to 7 board members. July audit prep: <strong>2 minutes</strong> instead of a month.</div>
-      <div style="display:flex;gap:10px;justify-content:center;">
-        <button class="btn btn-primary" onclick="showToast('⬇','Downloading board packet PDF...');closeModal()">Download PDF</button>
-        <button class="btn" onclick="closeModal()">Done</button>
+    <div id="modal-done" style="display:none;text-align:center;padding:8px 0;">
+      <div style="font-size:28px;margin-bottom:6px;">🗒️</div>
+      <div style="font-size:14px;font-weight:600;margin-bottom:4px;">Report ready!</div>
+      <div style="display:flex;gap:8px;justify-content:center;">
+        <button class="btn btn-primary" onclick="closeModal();showBoardReport()">Preview Report →</button>
+        <button class="btn" onclick="closeModal();showToast('⬇','Downloading PDF...')">Download PDF</button>
       </div>
     </div>
   `);
-  const steps = [['prog-bar','20%'],['prog-bar','40%'],['prog-bar','65%'],['prog-bar','85%'],['prog-bar','100%']];
-  const circles = ['s1','s2','s3','s4','s5'];
+  const steps = [['prog-bar','25%'],['prog-bar','55%'],['prog-bar','80%'],['prog-bar','100%']];
+  const circles = ['s1','s2','s3','s4'];
   let i = 0;
   function next() {
     if (i > 0) {
@@ -926,7 +948,7 @@ function generateBoardReport() {
       const cur = document.getElementById(circles[i]);
       if (cur) cur.className='step-circle step-active';
       i++;
-      setTimeout(next, 700);
+      setTimeout(next, 650);
     } else {
       const last = document.getElementById(circles[circles.length-1]);
       if (last) { last.className='step-circle step-done'; last.textContent='✓'; }
@@ -935,15 +957,251 @@ function generateBoardReport() {
         const stps = document.getElementById('modal-steps');
         if (done) done.style.display='block';
         if (stps) stps.style.display='none';
-      }, 400);
+      }, 300);
     }
   }
   setTimeout(next, 300);
 }
 
+function showBoardReport() {
+  // Show the full board report in the main content area
+  document.getElementById('main-content').innerHTML = getBoardReportHTML();
+  setActiveNav('nav-report');
+}
+
+function getBoardReportHTML() {
+  return `
+<div style="max-width:800px;margin:0 auto;">
+  <!-- Back button -->
+  <button class="btn" onclick="getReportsOverview && (document.getElementById('main-content').innerHTML = getReportsOverview())" style="margin-bottom:20px;">← Back to Reports</button>
+
+  <!-- BOARD REPORT DOCUMENT -->
+  <div style="background:var(--white);border-radius:16px;border:1px solid var(--border);overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
+
+    <!-- Cover -->
+    <div style="background:linear-gradient(135deg,#1e3a5f 0%,#2d5a8e 100%);padding:48px 40px;color:#fff;">
+      <div style="font-size:11px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;opacity:.7;margin-bottom:16px;">Board of Directors · Quarterly Report</div>
+      <div style="font-family:'DM Serif Display',serif;font-size:32px;line-height:1.2;margin-bottom:8px;">Bountiful Food Pantry</div>
+      <div style="font-family:'DM Serif Display',serif;font-size:20px;font-style:italic;opacity:.85;margin-bottom:24px;">Fiscal Year 2025 · Q3 Report</div>
+      <div style="display:flex;gap:32px;opacity:.9;">
+        <div><div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;opacity:.7;">Period</div><div style="font-size:14px;font-weight:600;">January – March 2025</div></div>
+        <div><div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;opacity:.7;">Prepared</div><div style="font-size:14px;font-weight:600;">May 13, 2025</div></div>
+        <div><div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;opacity:.7;">Organization</div><div style="font-size:14px;font-weight:600;">No Replay USA NA Inc</div></div>
+      </div>
+    </div>
+
+    <div style="padding:32px 40px;">
+
+      <!-- Executive Summary -->
+      <div style="margin-bottom:32px;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#1e3a5f;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid #1e3a5f;">Executive Summary</div>
+        <p style="font-size:14px;line-height:1.7;color:var(--text-muted);">Bountiful Food Pantry continues to demonstrate exceptional growth in service delivery during FY2025. Total pounds tracked have increased <strong style="color:var(--text);">30% year-over-year</strong> to 2.75 million pounds, while households served have grown <strong style="color:var(--text);">9.4% to 102,209 families</strong>. Revenue has increased <strong style="color:var(--text);">45.7% to $1,479,082</strong>, driven by expanded grant funding and community donations. Volunteer engagement remains strong at 44,026 hours, representing approximately <strong style="color:var(--text);">$1.12 million in contributed services</strong>.</p>
+      </div>
+
+      <!-- Key Metrics -->
+      <div style="margin-bottom:32px;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#1e3a5f;margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid #1e3a5f;">Key Performance Indicators · FY2025 vs FY2024</div>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;">
+          ${[
+            ['Total Pounds Tracked','2,750,000 lbs','2,120,000 lbs','↑ 30%','#2d7a45'],
+            ['Households Served','102,209','93,962','↑ 9.4%','#2d7a45'],
+            ['Total Revenue','$1,479,082','$1,014,510','↑ 45.7%','#2d7a45'],
+            ['Volunteer Hours','44,026 hrs','39,312 hrs','↑ 12.0%','#2d7a45'],
+            ['Grocery Rescue lbs','1,182,500 lbs','968,000 lbs','↑ 22.2%','#2d7a45'],
+            ['Mobile Pantry HH','8,342','7,318','↑ 14.0%','#2d7a45'],
+          ].map(([label,fy25,fy24,change,color])=>\`
+          <div style="background:#f8fbf8;border-radius:10px;padding:14px 16px;border:1px solid #e0ede2;">
+            <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">\${label}</div>
+            <div style="display:flex;align-items:baseline;justify-content:space-between;">
+              <div style="font-size:18px;font-weight:700;color:var(--text);">\${fy25}</div>
+              <div style="font-size:12px;font-weight:600;color:\${color};">\${change}</div>
+            </div>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Prior year: \${fy24}</div>
+          </div>\`).join('')}
+        </div>
+      </div>
+
+      <!-- Financial Summary -->
+      <div style="margin-bottom:32px;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#1e3a5f;margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid #1e3a5f;">Financial Summary · FY2025 YTD</div>
+        <table style="width:100%;border-collapse:collapse;font-size:13px;">
+          <tr style="background:#f0f4f8;"><th style="padding:10px 14px;text-align:left;color:#1e3a5f;font-weight:600;">Revenue Sources</th><th style="padding:10px 14px;text-align:right;color:#1e3a5f;font-weight:600;">Amount</th><th style="padding:10px 14px;text-align:right;color:#1e3a5f;font-weight:600;">% of Total</th></tr>
+          ${[
+            ['USDA / CSFP Grants','$612,000','41.4%'],
+            ['Community Donations','$384,000','26.0%'],
+            ['Davis County Grants','$248,000','16.8%'],
+            ['Corporate Sponsorships','$142,000','9.6%'],
+            ['Events & Fundraising','$93,082','6.3%'],
+          ].map(([s,a,p])=>\`<tr style="border-bottom:1px solid #f0f4f1;"><td style="padding:10px 14px;">\${s}</td><td style="padding:10px 14px;text-align:right;font-weight:600;color:#2d7a45;">\${a}</td><td style="padding:10px 14px;text-align:right;color:var(--text-muted);">\${p}</td></tr>\`).join('')}
+          <tr style="background:#f8fbf8;font-weight:700;"><td style="padding:10px 14px;">Total Revenue</td><td style="padding:10px 14px;text-align:right;color:#2d7a45;">$1,479,082</td><td style="padding:10px 14px;text-align:right;">100%</td></tr>
+        </table>
+      </div>
+
+      <!-- Program Highlights -->
+      <div style="margin-bottom:32px;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#1e3a5f;margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid #1e3a5f;">Program Highlights</div>
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          ${[
+            ['🛒 Grocery Rescue','43% of all incoming food now comes from our 16 store partners. Costco alone contributed 156,000 lbs this fiscal year. We added 2 new partners (Dick's Market #2 and Sprouts) in Q2.'],
+            ['🚌 Mobile Pantry','18 active stops across Davis County served 8,342 unique households this year — a 14% increase. Seniors 55+ make up 41% of those served. Three new stops were added in underserved zip codes.'],
+            ['📦 Pantry Packs','14,820 weekend food packs assembled and delivered to 23 partner schools. Pack assembly is now supported by 48 volunteer events per year, including weekly church group partnerships.'],
+            ['🤝 Volunteers','312 active volunteers contributed 44,026 hours — equivalent to approximately 21 full-time employees. Notable: several volunteers aged 80+ continue to serve as route drivers weekly.'],
+          ].map(([title,text])=>\`
+          <div style="display:flex;gap:14px;padding:14px;background:#fafbfa;border-radius:10px;border-left:3px solid #1e3a5f;">
+            <div style="font-size:20px;flex-shrink:0;">\${title.split(' ')[0]}</div>
+            <div><div style="font-size:13px;font-weight:600;margin-bottom:4px;">\${title.slice(3)}</div><div style="font-size:13px;color:var(--text-muted);line-height:1.6;">\${text}</div></div>
+          </div>\`).join('')}
+        </div>
+      </div>
+
+      <!-- Board Action Items -->
+      <div style="margin-bottom:24px;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#1e3a5f;margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid #1e3a5f;">Board Action Items</div>
+        <table style="width:100%;border-collapse:collapse;font-size:13px;">
+          <tr style="background:#f0f4f8;"><th style="padding:10px 14px;text-align:left;color:#1e3a5f;">Item</th><th style="padding:10px 14px;text-align:left;color:#1e3a5f;">Owner</th><th style="padding:10px 14px;text-align:left;color:#1e3a5f;">Due</th><th style="padding:10px 14px;text-align:left;color:#1e3a5f;">Status</th></tr>
+          ${[
+            ['Approve FY2026 budget proposal','Executive Director','Jun 30','Pending vote'],
+            ['Review USDA grant renewal application','Board Chair','May 31','In review'],
+            ['Authorize second warehouse expansion','Operations','Jul 1','Pending approval'],
+            ['Annual audit report review','Finance Committee','Jun 15','Scheduled'],
+          ].map(([item,owner,due,status])=>\`
+          <tr style="border-bottom:1px solid #f0f4f1;">
+            <td style="padding:10px 14px;font-weight:500;">\${item}</td>
+            <td style="padding:10px 14px;color:var(--text-muted);">\${owner}</td>
+            <td style="padding:10px 14px;color:var(--text-muted);">\${due}</td>
+            <td style="padding:10px 14px;"><span class="badge badge-gold">\${status}</span></td>
+          </tr>\`).join('')}
+        </table>
+      </div>
+
+      <!-- Footer note -->
+      <div style="font-size:12px;color:var(--text-muted);text-align:center;padding:16px 0;border-top:1px solid var(--border);">
+        Generated automatically by Bountiful Food Pantry Operations System · May 13, 2025 · 
+        <span style="color:#2ca01c;">✓ Synced with QuickBooks Online</span>
+      </div>
+
+    </div><!-- /padding -->
+  </div><!-- /white card -->
+
+  <div style="display:flex;gap:10px;margin-top:16px;justify-content:flex-end;">
+    <button class="btn btn-primary" onclick="showToast('⬇','Downloading 18-page board packet PDF...')">⬇ Download PDF</button>
+    <button class="btn" onclick="showToast('✉️','Emailed to 7 board members!')">✉️ Email to Board</button>
+    <button class="btn" onclick="showToast('🔗','Share link copied to clipboard!')">🔗 Share Link</button>
+  </div>
+</div>`;
+}
+
+
 function generateModuleReport(name) {
   showToast('🗒️', `${name} report generated — downloading PDF...`);
 }
+
+/* ===== QUICKBOOKS ===== */
+function getQBOverview() {
+  return `
+<div style="margin-bottom:20px;"><h2 style="font-family:'DM Serif Display',serif;font-size:24px;margin-bottom:4px;">QuickBooks Integration</h2>
+<p style="font-size:13px;color:var(--text-muted);">Phase 2 Feature · Connected to QuickBooks Online</p></div>
+
+<div class="report-card" style="background:linear-gradient(135deg,#edf9eb,#d4f5d0);border:1.5px solid rgba(44,160,28,0.25);">
+  <div style="display:flex;align-items:center;gap:16px;">
+    <div style="font-size:40px;">✅</div>
+    <div>
+      <div style="font-size:15px;font-weight:600;color:#1a5c14;margin-bottom:4px;">QuickBooks Online — Connected</div>
+      <div style="font-size:13px;color:#2a7a22;">Last synced: Today, 8:42 AM · Bountiful Food Pantry (No Replay USA NA Inc)</div>
+    </div>
+    <button class="btn" style="margin-left:auto;background:#2ca01c;color:#fff;border-color:#2ca01c;" onclick="showToast('🔄','Syncing with QuickBooks...')">Sync Now</button>
+  </div>
+</div>
+
+<div class="stats-row">
+  <div class="stat-card"><div class="stat-label">Revenue YTD</div><div class="stat-value">$1.479M</div><div class="stat-change stat-up">↑ 45.7% vs last year</div></div>
+  <div class="stat-card"><div class="stat-label">Expenses YTD</div><div class="stat-value">$1.312M</div><div class="stat-change" style="color:var(--text-muted);">88.7% expense ratio</div></div>
+  <div class="stat-card"><div class="stat-label">Unreconciled</div><div class="stat-value">3</div><div class="stat-change" style="color:#c9a227;">transactions pending</div></div>
+  <div class="stat-card"><div class="stat-label">Grants Tracked</div><div class="stat-value">12</div><div class="stat-change" style="color:var(--text-muted);">active grant budgets</div></div>
+</div>
+
+<div class="data-table">
+  <div class="table-header"><div class="table-title">Recent Transactions — Auto-Synced</div>
+  <div class="table-actions"><button class="btn" onclick="showTab('upload')">+ Manual Entry</button></div></div>
+  <table>
+    <tr><th>Date</th><th>Description</th><th>Category</th><th>Amount</th><th>QB Status</th></tr>
+    <tr><td>May 10</td><td>Grocery Rescue Transport Fuel</td><td>Program Expense</td><td style="color:#c0392b;">-$142.50</td><td><span class="badge badge-green">Synced ✓</span></td></tr>
+    <tr><td>May 9</td><td>USDA CSFP Grant Deposit</td><td>Grant Revenue</td><td style="color:#2d7a45;">+$28,400.00</td><td><span class="badge badge-green">Synced ✓</span></td></tr>
+    <tr><td>May 8</td><td>Community Donation — Anonymous</td><td>Donation Revenue</td><td style="color:#2d7a45;">+$500.00</td><td><span class="badge badge-green">Synced ✓</span></td></tr>
+    <tr><td>May 7</td><td>Volunteer Mileage Reimbursement</td><td>Program Expense</td><td style="color:#c0392b;">-$89.20</td><td><span class="badge badge-gold">Pending ⏳</span></td></tr>
+    <tr><td>May 7</td><td>UFB Food Purchase — Produce</td><td>Food Expense</td><td style="color:#c0392b;">-$2,140.00</td><td><span class="badge badge-gold">Pending ⏳</span></td></tr>
+    <tr><td>May 6</td><td>Davis County Grant Q2</td><td>Grant Revenue</td><td style="color:#2d7a45;">+$15,000.00</td><td><span class="badge badge-green">Synced ✓</span></td></tr>
+  </table>
+</div>
+
+<div class="report-card">
+  <div class="report-section-title">What Auto-Syncs</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+    ${[
+      ['📥 Donations','Every cash & check donation logged here posts automatically to QB Revenue'],
+      ['🏛️ Grants','Grant deposits and drawdowns map to QB grant tracking classes'],
+      ['🛒 Grocery Rescue','Transport & labor costs auto-categorize as Program Expenses'],
+      ['🚌 Mobile Pantry','Route operating costs post to the Mobile Pantry cost center'],
+      ['📦 Pantry Packs','Assembly supplies map to Program: Pantry Pack in QB'],
+      ['🤝 Volunteer Value','In-kind volunteer hours calculated & posted as in-kind contributions'],
+    ].map(([t,d])=>\`
+    <div style="background:var(--pantry-bg);border-radius:8px;padding:14px;">
+      <div style="font-size:13px;font-weight:600;margin-bottom:4px;">\${t}</div>
+      <div style="font-size:12px;color:var(--text-muted);">\${d}</div>
+    </div>\`).join('')}
+  </div>
+</div>`;
+}
+
+function getQBData() {
+  return `
+<div style="margin-bottom:20px;"><h2 style="font-family:'DM Serif Display',serif;font-size:22px;">QuickBooks Transaction Log</h2></div>
+<div class="data-table">
+  <div class="table-header"><div class="table-title">All Synced Transactions · FY2025</div>
+  <div class="table-actions"><button class="btn" onclick="exportData()">⬇ Export to QB</button></div></div>
+  <table>
+    <tr><th>Date</th><th>QB Account</th><th>Description</th><th>Class</th><th>Amount</th><th>Status</th></tr>
+    ${[
+      ['May 10','6100 Program Expenses','Grocery Rescue Transport','Grocery Rescue','-$142.50','Synced'],
+      ['May 9','4200 Grant Revenue','USDA CSFP Deposit','Unrestricted','+$28,400','Synced'],
+      ['May 8','4100 Donation Revenue','Anonymous Donation','General','+$500','Synced'],
+      ['May 7','6100 Program Expenses','Volunteer Mileage','Mobile Pantry','-$89.20','Pending'],
+      ['May 7','6200 Food Expenses','UFB Produce Purchase','Food Program','-$2,140','Pending'],
+      ['May 6','4200 Grant Revenue','Davis County Q2 Grant','Restricted','+$15,000','Synced'],
+    ].map(r=>\`<tr><td>\${r[0]}</td><td>\${r[1]}</td><td>\${r[2]}</td><td>\${r[3]}</td><td style="color:\${r[4].startsWith('+') ? '#2d7a45':'#c0392b'}">\${r[4]}</td><td><span class="badge \${r[5]==='Synced'?'badge-green':'badge-gold'}">\${r[5]}</span></td></tr>\`).join('')}
+  </table>
+</div>`;
+}
+
+function getQBUpload() {
+  return `
+<div style="margin-bottom:20px;"><h2 style="font-family:'DM Serif Display',serif;font-size:22px;">Manual QB Entry</h2>
+<p style="font-size:13px;color:var(--text-muted);">Entries here post directly to your QuickBooks chart of accounts.</p></div>
+<div class="report-card">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+    ${['Date','QB Account','Description','Amount','Class / Program','Memo'].map(f=>\`
+    <div><label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:4px;">\${f}</label>
+    <input type="\${f==='Date'?'date':'text'}" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;" placeholder="\${f}"/></div>\`).join('')}
+  </div>
+  <button class="btn" style="background:#2ca01c;color:#fff;border-color:#2ca01c;" onclick="saveEntry('quickbooks')">Post to QuickBooks</button>
+</div>`;
+}
+
+function getQBReport() {
+  return `
+<div style="margin-bottom:20px;"><h2 style="font-family:'DM Serif Display',serif;font-size:22px;">Financial Reports</h2></div>
+<div class="data-table">
+  <div class="table-header"><div class="table-title">Available QB Reports</div></div>
+  <table>
+    <tr><th>Report</th><th>Description</th><th></th></tr>
+    <tr><td>Profit & Loss YTD</td><td>Revenue vs expenses by program class</td><td><button class="btn" onclick="showToast('⬇','Pulling P&L from QuickBooks...')">Pull from QB</button></td></tr>
+    <tr><td>Grant Budget vs Actual</td><td>All active grants with spend-down status</td><td><button class="btn" onclick="showToast('⬇','Generating grant report...')">Pull from QB</button></td></tr>
+    <tr><td>Balance Sheet</td><td>Current assets, liabilities, net assets</td><td><button class="btn" onclick="showToast('⬇','Pulling Balance Sheet...')">Pull from QB</button></td></tr>
+    <tr><td>990 Prep Data</td><td>Program revenue & expense summary for tax prep</td><td><button class="btn" onclick="showToast('⬇','Preparing 990 data...')">Generate</button></td></tr>
+  </table>
+</div>`;
+}
+
 </script>
 </body>
 </html>
