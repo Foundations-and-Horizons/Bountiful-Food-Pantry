@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Bountiful Food Pantry — Operations</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --g:#2d7a45;--gl:#e8f5ed;--go2:#52b873;
+  --o:#e07b39;--ol:#fdf0e6;
+  --go:#c9a227;--gol:#fdf8e6;
+  --b:#1e3a5f;--bl:#e6edf7;
+  --qb:#2ca01c;--qbl:#edf9eb;
+  --v:#5b6af0;--vl:#eef0ff;
+  --up:#7c3aed;--upl:#f5f3ff;
+  --pl:#0ea5e9;--pll:#f0f9ff;
+  --bg:#f4f7f5;--white:#fff;--bdr:#e2e8e4;
+  --txt:#1a2e1f;--muted:#5a7263;
+  --shadow:0 2px 12px rgba(0,0,0,.07);
+  --shadow-lg:0 8px 32px rgba(0,0,0,.10);
+}
+html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--txt);overflow-x:hidden;}
+
+/* ---- PORTAL ---- */
+#portal{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 20px;position:relative;overflow:hidden;}
+.bc{position:fixed;border-radius:50%;pointer-events:none;}
+.bc1{top:-120px;right:-120px;width:500px;height:500px;background:radial-gradient(circle,rgba(45,122,69,.07),transparent 70%);}
+.bc2{bottom:-80px;left:-80px;width:400px;height:400px;background:radial-gradient(circle,rgba(224,123,57,.06),transparent 70%);}
+.pw{position:relative;z-index:1;width:100%;max-width:940px;display:flex;flex-direction:column;align-items:center;}
+.ph{text-align:center;margin-bottom:40px;animation:fu .6s ease both;}
+.pe{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--g);margin-bottom:8px;}
+.pt{font-family:'DM Serif Display',serif;font-size:clamp(30px,5.5vw,50px);font-weight:400;color:var(--txt);line-height:1.15;margin-bottom:10px;}
+.pt span{color:var(--g);font-style:italic;}
+.ps{font-size:14px;color:var(--muted);max-width:400px;margin:0 auto 24px;line-height:1.6;}
+.pstats{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:4px;}
+.pstat{text-align:center;background:rgba(255,255,255,.95);border-radius:14px;padding:14px 22px;border:1.5px solid rgba(45,122,69,.15);min-width:120px;box-shadow:var(--shadow);}
+.pstat-n{font-family:'DM Serif Display',serif;font-size:24px;color:var(--g);}
+.pstat-l{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-top:3px;}
+
+/* Portal grid — 4 top + 3 bottom (centered) */
+.cg-top{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;width:100%;animation:fu .6s .12s ease both;}
+.cg-bot{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;width:100%;margin-top:16px;animation:fu .6s .22s ease both;}
+
+.card{position:relative;background:var(--white);border-radius:20px;padding:26px 20px 22px;cursor:pointer;border:1.5px solid rgba(0,0,0,.06);box-shadow:var(--shadow);transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s;overflow:hidden;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;}
+.card:hover{transform:translateY(-6px) scale(1.015);box-shadow:var(--shadow-lg);}
+.ca{position:absolute;top:0;left:0;right:0;height:4px;border-radius:20px 20px 0 0;}
+.ci{width:54px;height:54px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;}
+.cl{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin-bottom:2px;}
+.ct{font-family:'DM Serif Display',serif;font-size:17px;font-weight:400;margin-bottom:4px;}
+.cd{font-size:11.5px;color:var(--muted);line-height:1.55;}
+.carr{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;padding:7px 16px;border-radius:100px;margin-top:4px;transition:all .2s;}
+
+/* card themes */
+.c-mp .ca{background:linear-gradient(90deg,var(--g),#52b873);}
+.c-mp .ci{background:var(--gl);color:var(--g);}
+.c-mp .cl{color:var(--g);}
+.c-mp .carr{background:linear-gradient(135deg,var(--g),#4a9a62);color:#fff;box-shadow:0 4px 12px rgba(45,122,69,.28);}
+.c-pp .ca{background:linear-gradient(90deg,var(--o),#f5a060);}
+.c-pp .ci{background:var(--ol);color:var(--o);}
+.c-pp .cl{color:var(--o);}
+.c-pp .carr{background:linear-gradient(135deg,var(--o),#f5a060);color:#fff;box-shadow:0 4px 12px rgba(224,123,57,.28);}
+.c-gr .ca{background:linear-gradient(90deg,var(--go),#e8c048);}
+.c-gr .ci{background:var(--gol);color:var(--go);}
+.c-gr .cl{color:var(--go);}
+.c-gr .carr{background:linear-gradient(135deg,var(--go),#e8c048);color:#fff;box-shadow:0 4px 12px rgba(201,162,39,.28);}
+.c-vol .ca{background:linear-gradient(90deg,var(--v),#7b88f5);}
+.c-vol .ci{background:var(--vl);color:var(--v);}
+.c-vol .cl{color:var(--v);}
+.c-vol .carr{background:linear-gradient(135deg,var(--v),#7b88f5);color:#fff;box-shadow:0 4px 12px rgba(91,106,240,.28);}
+.c-qb .ca{background:linear-gradient(90deg,var(--qb),#4dc73a);}
+.c-qb .ci{background:var(--qbl);color:var(--qb);}
+.c-qb .cl{color:var(--qb);}
+.c-qb .carr{background:linear-gradient(135deg,var(--qb),#4dc73a);color:#fff;box-shadow:0 4px 12px rgba(44,160,28,.28);}
+.c-rpt .ca{background:linear-gradient(90deg,var(--b),#2d5a8e);}
+.c-rpt .ci{background:var(--bl);color:var(--b);}
+.c-rpt .cl{color:var(--b);}
+.c-rpt .carr{background:linear-gradient(135deg,var(--b),#2d5a8e);color:#fff;box-shadow:0 4px 12px rgba(30,58,95,.28);}
+.c-up .ca{background:linear-gradient(90deg,var(--up),#9f5ff5);}
+.c-up .ci{background:var(--upl);color:var(--up);}
+.c-up .cl{color:var(--up);}
+.c-up .carr{background:linear-gradient(135deg,var(--up),#9f5ff5);color:#fff;box-shadow:0 4px 12px rgba(124,58,237,.28);}
+.c-pl .ca{background:linear-gradient(90deg,var(--pl),#38bdf8);}
+.c-pl .ci{background:var(--pll);color:var(--pl);}
+.c-pl .cl{color:var(--pl);}
+.c-pl .carr{background:linear-gradient(135deg,var(--pl),#38bdf8);color:#fff;box-shadow:0 4px 12px rgba(14,165,233,.28);}
+
+/* ---- APP SHELL ---- */
+#app{display:none;height:100vh;flex-direction:column;}
+.top{background:var(--white);border-bottom:1px solid var(--bdr);padding:0 22px;height:54px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;box-shadow:0 1px 4px rgba(0,0,0,.04);}
+.tl{display:flex;align-items:center;gap:12px;}
+.tlogo{font-family:'DM Serif Display',serif;font-size:16px;color:var(--g);}
+.tbread{font-size:12px;color:var(--muted);}
+.tbread span{color:var(--txt);font-weight:500;}
+.back{display:flex;align-items:center;gap:5px;padding:6px 14px;border-radius:8px;background:var(--gl);color:var(--g);font-size:12px;font-weight:500;cursor:pointer;border:none;transition:background .15s;}
+.back:hover{background:#d0ecda;}
+.al{display:flex;flex:1;overflow:hidden;}
+
+/* Sidebar */
+.sb{width:210px;background:var(--white);border-right:1px solid var(--bdr);flex-shrink:0;overflow-y:auto;padding:14px 10px;}
+.sbh{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:12px 10px 5px;}
+.ni{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:9px;cursor:pointer;font-size:12.5px;color:var(--muted);transition:all .15s;margin-bottom:2px;}
+.ni:hover{background:var(--bg);color:var(--txt);}
+.ni.active{background:var(--gl);color:var(--g);font-weight:600;}
+.ni-icon{font-size:14px;width:18px;text-align:center;flex-shrink:0;}
+
+/* Main content */
+.mc{flex:1;overflow-y:auto;padding:28px 32px;}
+
+/* ---- CONTENT COMPONENTS ---- */
+.page-header{margin-bottom:24px;}
+.page-header h2{font-family:'DM Serif Display',serif;font-size:24px;margin-bottom:4px;}
+.page-header p{font-size:13px;color:var(--muted);}
+
+/* Stat row */
+.sr{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
+.sc{background:var(--white);border-radius:12px;padding:16px 18px;border:1px solid var(--bdr);box-shadow:var(--shadow);}
+.sl{font-size:11px;color:var(--muted);margin-bottom:4px;font-weight:500;}
+.sv{font-size:22px;font-weight:700;color:var(--txt);line-height:1;}
+.sch{font-size:11px;margin-top:5px;}
+.sup{color:var(--g);}
+.sdn{color:#c0392b;}
+.sne{color:var(--muted);}
+
+/* Data table card */
+.dt{background:var(--white);border-radius:12px;border:1px solid var(--bdr);overflow:hidden;margin-bottom:20px;box-shadow:var(--shadow);}
+.dth{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--bdr);}
+.dtt{font-size:14px;font-weight:600;}
+.dta{display:flex;gap:8px;}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--bdr);background:var(--white);color:var(--txt);transition:all .15s;font-family:inherit;}
+.btn:hover{background:var(--bg);}
+.btn-g{background:var(--g);color:#fff;border-color:var(--g);}
+.btn-g:hover{background:#246338;}
+.btn-o{background:var(--o);color:#fff;border-color:var(--o);}
+.btn-go{background:var(--go);color:#fff;border-color:var(--go);}
+.btn-b{background:var(--b);color:#fff;border-color:var(--b);}
+.btn-qb{background:var(--qb);color:#fff;border-color:var(--qb);}
+.btn-v{background:var(--v);color:#fff;border-color:var(--v);}
+.btn-up{background:var(--up);color:#fff;border-color:var(--up);}
+.btn-pl{background:var(--pl);color:#fff;border-color:var(--pl);}
+
+table{width:100%;border-collapse:collapse;}
+th{padding:10px 16px;text-align:left;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;background:#fafbfa;border-bottom:1px solid var(--bdr);}
+td{padding:11px 16px;font-size:12.5px;border-bottom:1px solid #f0f4f1;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:#fafcfa;}
+
+.badge{display:inline-block;padding:3px 10px;border-radius:100px;font-size:10px;font-weight:600;}
+.bg{background:var(--gl);color:var(--g);}
+.bo{background:var(--ol);color:var(--o);}
+.bb{background:var(--bl);color:var(--b);}
+.bgo{background:var(--gol);color:var(--go);}
+.bgr{background:#f3f4f6;color:#6b7280;}
+.bqb{background:var(--qbl);color:var(--qb);}
+.brd{background:#fef2f2;color:#c0392b;}
+.bup{background:var(--upl);color:var(--up);}
+.bpl{background:var(--pll);color:var(--pl);}
+
+/* Content card / section box */
+.rc{background:var(--white);border-radius:12px;border:1px solid var(--bdr);padding:22px;margin-bottom:20px;box-shadow:var(--shadow);}
+.rsh{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+
+/* Mini chart */
+.mini-chart{display:flex;align-items:flex-end;gap:5px;height:70px;padding:6px 0;}
+.bw{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.bar{width:100%;background:var(--g);border-radius:3px 3px 0 0;opacity:.7;transition:opacity .2s;}
+.bw:hover .bar{opacity:1;}
+.bl2{font-size:9px;color:var(--muted);}
+
+/* Form fields */
+.fld-wrap{display:flex;flex-direction:column;gap:4px;}
+.fld-wrap label{font-size:11px;color:var(--muted);font-weight:500;}
+.fld-wrap input, .fld-wrap select{width:100%;padding:9px 13px;border:1px solid var(--bdr);border-radius:9px;font-size:13px;font-family:inherit;background:var(--bg);transition:border .15s;}
+.fld-wrap input:focus, .fld-wrap select:focus{outline:none;border-color:var(--g);background:var(--white);}
+
+/* ---- MODAL ---- */
+#ov{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;display:none;align-items:center;justify-content:center;}
+#ov.open{display:flex;}
+.mo{background:var(--white);border-radius:18px;padding:28px;max-width:520px;width:90%;box-shadow:0 24px 64px rgba(0,0,0,.18);}
+.mot{font-family:'DM Serif Display',serif;font-size:20px;margin-bottom:6px;}
+.mos{font-size:12px;color:var(--muted);margin-bottom:16px;}
+.mop{background:#f0f4f1;border-radius:100px;height:8px;margin:16px 0;}
+.mopb{background:linear-gradient(90deg,var(--g),var(--go2));height:8px;border-radius:100px;transition:width .4s ease;}
+.mst{display:flex;flex-direction:column;gap:10px;margin:14px 0;}
+.msi{display:flex;align-items:center;gap:10px;font-size:12.5px;}
+.sc2{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;}
+.sd{background:var(--g);color:#fff;}
+.sa{background:var(--o);color:#fff;animation:pulse 1s infinite;}
+.sp{background:#f0f4f1;color:var(--muted);}
+
+/* ---- TOAST ---- */
+#toast{position:fixed;bottom:24px;right:24px;background:#1a2e1f;color:#fff;padding:11px 20px;border-radius:10px;font-size:12.5px;z-index:300;display:none;align-items:center;gap:9px;box-shadow:0 8px 28px rgba(0,0,0,.22);}
+#toast.show{display:flex;animation:si .3s ease;}
+
+/* ---- BOARD REPORT ---- */
+.brcover{background:linear-gradient(135deg,#1e3a5f,#2d5a8e);padding:40px;color:#fff;border-radius:14px 14px 0 0;}
+.brsec{margin-bottom:28px;}
+.brh{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--b);margin-bottom:14px;padding-bottom:7px;border-bottom:2px solid var(--b);}
+
+/* ---- PRICE LOCK STYLES ---- */
+.pl-banner{background:linear-gradient(135deg,#f0f9ff,#e0f2fe);border-radius:14px;padding:22px 24px;border:1.5px solid rgba(14,165,233,.25);margin-bottom:22px;display:flex;align-items:center;gap:20px;}
+.pl-icon{font-size:36px;flex-shrink:0;}
+.pl-status-active{font-size:14px;font-weight:600;color:#0369a1;}
+.pl-status-sub{font-size:12px;color:#0ea5e9;margin-top:2px;}
+.pl-value{font-family:'DM Serif Display',serif;font-size:28px;color:#0369a1;margin-left:auto;padding-right:8px;}
+
+.lock-card{background:var(--white);border-radius:14px;border:1px solid var(--bdr);padding:24px;margin-bottom:18px;box-shadow:var(--shadow);}
+.lock-card h3{font-family:'DM Serif Display',serif;font-size:18px;margin-bottom:4px;}
+.lock-card p{font-size:12.5px;color:var(--muted);margin-bottom:18px;}
+
+.price-history-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid #f0f4f1;}
+.price-history-row:last-child{border-bottom:none;}
+.ph-period{font-size:13px;font-weight:600;}
+.ph-range{font-size:11px;color:var(--muted);margin-top:2px;}
+.ph-price{font-family:'DM Serif Display',serif;font-size:20px;color:var(--g);}
+.ph-value{font-size:12px;color:var(--muted);text-align:right;margin-top:1px;}
+.ph-locked{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;padding:3px 9px;border-radius:100px;background:var(--pll);color:var(--pl);}
+
+.impact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px;}
+.impact-item{background:var(--bg);border-radius:10px;padding:14px;text-align:center;}
+.impact-month{font-size:11px;color:var(--muted);font-weight:500;margin-bottom:3px;}
+.impact-lbs{font-size:15px;font-weight:700;}
+.impact-val{font-size:12px;color:var(--g);margin-top:2px;font-weight:600;}
+.impact-val.zero{color:var(--muted);font-weight:400;}
+
+/* ---- UPLOAD HUB STYLES ---- */
+.upload-hub-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;}
+.upload-module-card{background:var(--white);border-radius:14px;border:1px solid var(--bdr);padding:20px;box-shadow:var(--shadow);transition:transform .2s,box-shadow .2s;}
+.upload-module-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);}
+.umc-header{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.umc-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.umc-title{font-size:14px;font-weight:600;}
+.umc-sub{font-size:11px;color:var(--muted);}
+.uz{border:2px dashed var(--bdr);border-radius:10px;padding:22px;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg);}
+.uz:hover{border-color:var(--up);background:var(--upl);}
+.ui{font-size:26px;margin-bottom:6px;}
+.ut{font-size:13px;font-weight:600;margin-bottom:3px;}
+.us{font-size:11px;color:var(--muted);}
+
+.uz-sm{border:2px dashed var(--bdr);border-radius:9px;padding:14px 16px;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg);display:flex;align-items:center;gap:10px;}
+.uz-sm:hover{border-color:var(--up);background:var(--upl);}
+.uz-sm .ui{font-size:20px;margin:0;}
+.uz-sm-text{text-align:left;}
+.uz-sm-title{font-size:12.5px;font-weight:600;}
+.uz-sm-sub{font-size:11px;color:var(--muted);}
+
+.import-steps{display:flex;gap:0;margin-bottom:20px;}
+.import-step{flex:1;text-align:center;position:relative;}
+.import-step:not(:last-child)::after{content:'→';position:absolute;right:-8px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--muted);}
+.is-num{width:30px;height:30px;border-radius:50%;background:var(--up);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;margin:0 auto 6px;}
+.is-label{font-size:11px;color:var(--muted);}
+
+@keyframes fu{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.5;}}
+@keyframes si{from{transform:translateY(14px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+@media(max-width:700px){.cg-top,.cg-bot{grid-template-columns:1fr 1fr;}.sr{grid-template-columns:1fr 1fr;}.sb{display:none;}.mc{padding:18px 16px;}.upload-hub-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div id="ov"><div class="mo" id="mc2"></div></div>
+<div id="toast"><span id="ti">✓</span><span id="tm"></span></div>
+
+<!-- PORTAL -->
+<div id="portal">
+  <div class="bc bc1"></div><div class="bc bc2"></div>
+  <div class="pw">
+    <div class="ph">
+      <div class="pe">Operations Platform · Demo</div>
+      <div class="pt">Bountiful <span>Food Pantry</span></div>
+      <div class="ps">One place for all your data, programs, and reports — so your team can focus on what matters.</div>
+      <div class="pstats">
+        <div class="pstat"><div class="pstat-n">2.75M</div><div class="pstat-l">lbs distributed</div></div>
+        <div class="pstat"><div class="pstat-n">102K</div><div class="pstat-l">households served</div></div>
+        <div class="pstat"><div class="pstat-n">312</div><div class="pstat-l">volunteers</div></div>
+        <div class="pstat"><div class="pstat-n">16</div><div class="pstat-l">store partners</div></div>
+      </div>
+    </div>
+
+    <!-- Top row: 4 program cards -->
+    <div class="cg-top">
+      <div class="card c-mp" onclick="openApp('mp')">
+        <div class="ca"></div>
+        <div class="ci">🚌</div>
+        <div>
+          <div class="cl">Program</div>
+          <div class="ct">Mobile Pantry</div>
+          <div class="cd">Route stops, households served, senior & new client tracking</div>
+        </div>
+        <div class="carr">Open →</div>
+      </div>
+      <div class="card c-pp" onclick="openApp('pp')">
+        <div class="ca"></div>
+        <div class="ci">📦</div>
+        <div>
+          <div class="cl">Program</div>
+          <div class="ct">Pantry Packs</div>
+          <div class="cd">Assembly events, school distribution, volunteer packing</div>
+        </div>
+        <div class="carr">Open →</div>
+      </div>
+      <div class="card c-gr" onclick="openApp('gr')">
+        <div class="ca"></div>
+        <div class="ci">🛒</div>
+        <div>
+          <div class="cl">Program</div>
+          <div class="ct">Grocery Rescue</div>
+          <div class="cd">Store pickups, receipts, partner tracking, food value logs</div>
+        </div>
+        <div class="carr">Open →</div>
+      </div>
+      <div class="card c-vol" onclick="openApp('vol')">
+        <div class="ca"></div>
+        <div class="ci">🤝</div>
+        <div>
+          <div class="cl">People</div>
+          <div class="ct">Volunteers</div>
+          <div class="cd">Hours, events, group tracking, impact dollar value</div>
+        </div>
+        <div class="carr">Open →</div>
+      </div>
+    </div>
+
+    <!-- Bottom row: 3 system cards -->
+    <div class="cg-bot">
+      <div class="card c-up" onclick="openApp('upload')">
+        <div class="ca"></div>
+        <div class="ci">⬆️</div>
+        <div>
+          <div class="cl">Data Import</div>
+          <div class="ct">Upload Data</div>
+          <div class="cd">Import historical CSV files from any module to bring the system up to date</div>
+        </div>
+        <div class="carr">Upload →</div>
+      </div>
+      <div class="card c-pl" onclick="openApp('pricelock')">
+        <div class="ca"></div>
+        <div class="ci">🔒</div>
+        <div>
+          <div class="cl">Food Valuation</div>
+          <div class="ct">Price Lock</div>
+          <div class="cd">Set Feeding America's annual food price per pound to auto-calculate food values</div>
+        </div>
+        <div class="carr">Manage →</div>
+      </div>
+      <div class="card c-rpt" onclick="openApp('report')">
+        <div class="ca"></div>
+        <div class="ci">📊</div>
+        <div>
+          <div class="cl">Finance + Reporting</div>
+          <div class="ct">Reports & QuickBooks</div>
+          <div class="cd">Board packets, year-over-year trends, QuickBooks sync</div>
+        </div>
+        <div class="carr">Open →</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="top">
+    <div class="tl">
+      <div class="tlogo">🌿 Bountiful</div>
+      <div class="tbread">/ <span id="breadcrumb">Dashboard</span></div>
+    </div>
+    <button class="back" onclick="goPortal()">← All Modules</button>
+  </div>
+  <div class="al">
+    <div class="sb" id="sidebar"></div>
+    <div class="mc" id="mc"></div>
+  </div>
+</div>
+
+<script>
+// ===== NAVIGATION =====
+var currentMod='';
+var navConfigs={
+  mp:{label:'Mobile Pantry',color:'--g',items:[
+    {id:'overview',icon:'📋',label:'Overview'},
+    {id:'data',icon:'📅',label:'All Route Stops'},
+    {id:'upload',icon:'➕',label:'Log a Stop'},
+    {id:'report',icon:'📈',label:'Reports'}
+  ]},
+  pp:{label:'Pantry Packs',color:'--o',items:[
+    {id:'overview',icon:'📋',label:'Overview'},
+    {id:'data',icon:'📅',label:'All Events'},
+    {id:'upload',icon:'➕',label:'Log an Event'},
+    {id:'report',icon:'📈',label:'Reports'}
+  ]},
+  gr:{label:'Grocery Rescue',color:'--go',items:[
+    {id:'overview',icon:'📋',label:'Overview'},
+    {id:'data',icon:'📅',label:'All Pickups'},
+    {id:'upload',icon:'➕',label:'Log a Pickup'},
+    {id:'report',icon:'📈',label:'Reports'}
+  ]},
+  vol:{label:'Volunteers',color:'--v',items:[
+    {id:'overview',icon:'📋',label:'Overview'},
+    {id:'data',icon:'📅',label:'Hour Log'},
+    {id:'upload',icon:'➕',label:'Log Hours'},
+    {id:'report',icon:'📈',label:'Reports'}
+  ]},
+  upload:{label:'Upload Data',color:'--up',items:[
+    {id:'overview',icon:'⬆️',label:'Import Hub'},
+    {id:'history',icon:'🕐',label:'Import History'}
+  ]},
+  pricelock:{label:'Price Lock',color:'--pl',items:[
+    {id:'overview',icon:'🔒',label:'Current Lock'},
+    {id:'history',icon:'📅',label:'Lock History'},
+    {id:'impact',icon:'💰',label:'Value by Month'}
+  ]},
+  report:{label:'Reports & QuickBooks',color:'--b',items:[
+    {id:'overview',icon:'📊',label:'Board Reports'},
+    {id:'quickbooks',icon:'💚',label:'QuickBooks'},
+    {id:'data',icon:'📈',label:'Year-over-Year'},
+    {id:'upload',icon:'📂',label:'Import Source Data'}
+  ]}
+};
+
+function openApp(mod){
+  currentMod=mod;
+  document.getElementById('portal').style.display='none';
+  var a=document.getElementById('app');
+  a.style.display='flex';
+  var cfg=navConfigs[mod];
+  document.getElementById('breadcrumb').textContent=cfg.label;
+  buildSidebar(mod);
+  showTab('overview');
+}
+
+function buildSidebar(mod){
+  var cfg=navConfigs[mod];
+  var html='<div class="sbh">'+cfg.label+'</div>';
+  cfg.items.forEach(function(it){
+    html+='<div class="ni" id="n-'+it.id+'" onclick="showTab(\''+it.id+'\')"><span class="ni-icon">'+it.icon+'</span>'+it.label+'</div>';
+  });
+  document.getElementById('sidebar').innerHTML=html;
+}
+
+function showTab(tab){
+  document.querySelectorAll('.ni').forEach(function(el){el.classList.remove('active');});
+  var el=document.getElementById('n-'+tab);
+  if(el) el.classList.add('active');
+  var fn=currentMod+'_'+tab;
+  var content='';
+  if(typeof window[fn]==='function') content=window[fn]();
+  else content='<div style="color:var(--muted);padding:40px;text-align:center;font-size:14px;">Coming soon.</div>';
+  document.getElementById('mc').innerHTML=content;
+}
+
+function setNav(id){
+  document.querySelectorAll('.ni').forEach(function(el){el.classList.remove('active');});
+  var el=document.getElementById(id);
+  if(el) el.classList.add('active');
+}
+
+function goPortal(){
+  document.getElementById('app').style.display='none';
+  document.getElementById('portal').style.display='flex';
+}
+
+// ===== MODAL / TOAST / UPLOAD =====
+function modal(html){
+  document.getElementById('mc2').innerHTML=html;
+  document.getElementById('ov').classList.add('open');
+}
+function closeModal(){document.getElementById('ov').classList.remove('open');}
+document.getElementById('ov').addEventListener('click',function(e){if(e.target===this)closeModal();});
+
+function toast(icon,msg){
+  document.getElementById('ti').textContent=icon;
+  document.getElementById('tm').textContent=msg;
+  var t=document.getElementById('toast');
+  t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show');},3000);
+}
+
+function uploadAnim(label){
+  modal('<div class="mot">Importing '+label+' Data</div>'+
+  '<div class="mos">Processing your CSV file...</div>'+
+  '<div class="mop"><div class="mopb" id="pb" style="width:0%"></div></div>'+
+  '<div class="mst" id="mst">'+
+  '<div class="msi"><div class="sc2 sa" id="ss1">1</div><span>Reading and validating file structure</span></div>'+
+  '<div class="msi"><div class="sc2 sp" id="ss2">2</div><span>Matching columns to data fields</span></div>'+
+  '<div class="msi"><div class="sc2 sp" id="ss3">3</div><span>Importing records to database</span></div>'+
+  '</div><div id="md" style="display:none;text-align:center;padding:10px 0;">'+
+  '<div style="font-size:32px;margin-bottom:8px;">✅</div>'+
+  '<div style="font-size:15px;font-weight:600;margin-bottom:4px;">Import Complete!</div>'+
+  '<div style="font-size:12px;color:var(--muted);margin-bottom:16px;">Your data is now in the system and ready for reporting.</div>'+
+  '<button class="btn btn-g" onclick="closeModal()">Done</button>'+
+  '</div>');
+  runSteps(['pb'],['35%','70%','100%'],['ss1','ss2','ss3'],700);
+}
+
+function runSteps(pbs,vals,steps,delay){
+  var i=0;
+  function step(){
+    if(i<steps.length){
+      if(i>0){var prev=document.getElementById(steps[i-1]);if(prev){prev.className='sc2 sd';prev.textContent='✓';}}
+      var cur=document.getElementById(steps[i]);if(cur)cur.className='sc2 sa';
+      pbs.forEach(function(p,pi){var el=document.getElementById(p);if(el)el.style.width=vals[pi*steps.length+i]||vals[i];});
+      i++;setTimeout(step,delay);
+    } else {
+      if(steps.length>0){var last=document.getElementById(steps[steps.length-1]);if(last){last.className='sc2 sd';last.textContent='✓';}}
+      pbs.forEach(function(p){var el=document.getElementById(p);if(el)el.style.width='100%';});
+      var s=document.getElementById('mst');if(s)s.style.display='none';
+      setTimeout(function(){var md=document.getElementById('md');if(md)md.style.display='block';},350);
+    }
+  }
+  setTimeout(step,300);
+}
+
+function saveEntry(nm){toast('✅','Entry saved to '+nm+'!');}
+
+// ===== HELPER FUNCTIONS =====
+function sc(lbl,val,ch,cls){
+  return '<div class="sc"><div class="sl">'+lbl+'</div><div class="sv">'+val+'</div><div class="sch '+cls+'">'+ch+'</div></div>';}
+function badge(t,c){return '<span class="badge '+c+'">'+t+'</span>';}
+function row(cells){return '<tr>'+cells.map(function(c){return '<td>'+c+'</td>';}).join('')+'</tr>';}
+function chartBars(vals,max){
+  var months=['J','F','M','A','M','J','J','A','S','O','N','D'];
+  return '<div class="mini-chart">'+vals.map(function(v,i){
+    var h=Math.round(v/max*62)+8;
+    return '<div class="bw"><div class="bar" style="height:'+h+'px;"></div><div class="bl2">'+months[i]+'</div></div>';
+  }).join('')+'</div>';}
+function inv(n,q,s){
+  return '<div style="background:var(--bg);border-radius:9px;padding:13px;text-align:center;">'+
+  '<div style="font-size:12px;font-weight:600;">'+n+'</div>'+
+  '<div style="font-size:16px;font-weight:700;color:var(--g);margin:3px 0;">'+q+'</div>'+
+  '<div style="font-size:11px;">'+s+'</div></div>';}
+function qbmap(t,d){
+  return '<div style="background:var(--bg);border-radius:9px;padding:13px;">'+
+  '<div style="font-size:12.5px;font-weight:600;margin-bottom:3px;">'+t+'</div>'+
+  '<div style="font-size:11px;color:var(--muted);">'+d+'</div></div>';}
+function fld(lbl,type){
+  return '<div class="fld-wrap"><label>'+lbl+'</label>'+
+  '<input type="'+(type||'text')+'" placeholder="'+lbl+'"/></div>';}
+function kpi2(lbl,fy25,fy24,ch){
+  return '<div style="background:#f8fbf8;border-radius:10px;padding:14px 16px;border:1px solid #e0ede2;">'+
+  '<div style="font-size:11px;color:var(--muted);margin-bottom:6px;">'+lbl+'</div>'+
+  '<div style="display:flex;align-items:baseline;justify-content:space-between;">'+
+  '<div style="font-size:18px;font-weight:700;">'+fy25+'</div>'+
+  '<div style="font-size:12px;font-weight:600;color:var(--g);">'+ch+'</div></div>'+
+  '<div style="font-size:10px;color:var(--muted);margin-top:3px;">Prior year: '+fy24+'</div></div>';}
+function frow(s,a,p){
+  return '<tr style="border-bottom:1px solid #f0f4f1;">'+
+  '<td style="padding:10px 13px;">'+s+'</td>'+
+  '<td style="padding:10px 13px;text-align:right;font-weight:600;color:var(--g);">'+a+'</td>'+
+  '<td style="padding:10px 13px;text-align:right;color:var(--muted);">'+p+'</td></tr>';}
+function pghl(icon,title,text){
+  return '<div style="display:flex;gap:13px;padding:14px;background:#fafbfa;border-radius:10px;border-left:3px solid var(--b);margin-bottom:10px;">'+
+  '<div style="font-size:18px;flex-shrink:0;margin-top:1px;">'+icon+'</div>'+
+  '<div><div style="font-size:13px;font-weight:600;margin-bottom:3px;">'+title+'</div>'+
+  '<div style="font-size:12px;color:var(--muted);line-height:1.6;">'+text+'</div></div></div>';}
+function brow(item,owner,due,status){
+  return '<tr style="border-bottom:1px solid #f0f4f1;">'+
+  '<td style="padding:10px 13px;font-weight:500;font-size:12.5px;">'+item+'</td>'+
+  '<td style="padding:10px 13px;font-size:12px;color:var(--muted);">'+owner+'</td>'+
+  '<td style="padding:10px 13px;font-size:12px;color:var(--muted);">'+due+'</td>'+
+  '<td style="padding:10px 13px;">'+badge(status,'bgo')+'</td></tr>';}
+function pageHeader(title,sub){
+  return '<div class="page-header"><h2>'+title+'</h2><p>'+sub+'</p></div>';}
+
+// ===== MOBILE PANTRY =====
+function mp_overview(){return ''+
+pageHeader('Mobile Pantry','FY2025 · Bus & Truck Routes · Davis County')+
+'<div class="sr">'+
+  sc('Households Served','8,342','↑ 14% vs last year','sup')+
+  sc('Total Individuals','23,618','↑ 11% vs last year','sup')+
+  sc('Active Stops','18','+3 new this year','sup')+
+  sc('Seniors 55+','41%','of households served','sne')+
+'</div>'+
+'<div class="dt"><div class="dth"><div class="dtt">Recent Route Stops</div>'+
+'<div class="dta"><button class="btn btn-g" onclick="showTab(\'upload\')">+ Log Stop</button></div></div>'+
+'<table><tr><th>Date</th><th>Route</th><th>Location</th><th>HH</th><th>People</th><th>Seniors</th><th>New</th><th>Status</th></tr>'+
+row(['May 9','Bus A','Bountiful Rec Center','84','231','38','7',badge('Complete','bg')])+
+row(['May 9','Truck 2','Woods Cross City Hall','62','178','29','4',badge('Complete','bg')])+
+row(['May 7','Bus B','North Salt Lake Park','71','203','31','6',badge('Complete','bg')])+
+row(['May 7','Truck 1','Centerville Sr Center','48','119','44','2',badge('Complete','bg')])+
+row(['May 14','Bus A','Bountiful Rec Center','—','—','—','—',badge('Scheduled','bb')])+
+'</table></div>'+
+'<div class="dt"><div class="dth"><div class="dtt">Monthly Households Served</div></div>'+
+'<div style="padding:14px 18px;">'+chartBars([520,580,612,695,670,710,740,780,760,810,840,880],900)+'</div></div>';}
+
+function mp_data(){return ''+
+pageHeader('All Route Stops','FY2025 complete record')+
+'<div class="dt"><div class="dth"><div class="dtt">Stop Records</div>'+
+'<div class="dta"><button class="btn" onclick="toast(\'⬇\',\'CSV exported!\')">⬇ Export CSV</button>'+
+'<button class="btn btn-g" onclick="showTab(\'upload\')">+ Add Stop</button></div></div>'+
+'<table><tr><th>Date</th><th>Route</th><th>Location</th><th>ZIP</th><th>HH</th><th>Indiv</th><th>Vouchers</th><th>Seniors</th><th>New</th></tr>'+
+row(['May 9','Bus A','Bountiful Rec Center','84010','84','231','12','38','7'])+
+row(['May 9','Truck 2','Woods Cross City Hall','84087','62','178','8','29','4'])+
+row(['May 7','Bus B','North Salt Lake Park','84054','71','203','9','31','6'])+
+row(['May 7','Truck 1','Centerville Sr Center','84014','48','119','5','44','2'])+
+row(['May 2','Bus A','Bountiful Rec Center','84010','79','218','11','35','5'])+
+row(['May 2','Truck 2','Farmington City Hall','84025','55','161','7','24','3'])+
+'</table></div>';}
+
+function mp_upload(){return ''+
+pageHeader('Log a Route Stop','Enter data after each mobile pantry stop')+
+'<div class="rc">'+
+'<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;">'+
+fld('Date','date')+fld('Route (Bus A, Truck 2, etc.)','text')+
+fld('Location / Site Name','text')+fld('ZIP Code','text')+
+fld('Households Served','number')+fld('Total Individuals','number')+
+fld('Vouchers Distributed','number')+fld('Seniors 55+','number')+
+fld('New Clients','number')+fld('Notes','text')+
+'</div><button class="btn btn-g" onclick="saveEntry(\'Mobile Pantry\')">✓ Save Stop</button></div>';}
+
+function mp_report(){return ''+
+pageHeader('Mobile Pantry Reports','Generate and export route data')+
+'<div class="rc" style="display:flex;align-items:center;justify-content:space-between;gap:20px;">'+
+'<div><div style="font-size:14px;font-weight:600;margin-bottom:3px;">Generate Mobile Pantry Report</div>'+
+'<div style="font-size:12px;color:var(--muted);">Pulls all route stop data for FY2025, formats year-over-year comparison.</div></div>'+
+'<button class="btn btn-g" onclick="toast(\'🗒️\',\'Mobile Pantry report generated!\')">🗒️ Generate</button></div>'+
+'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">'+
+'<div class="sc"><div class="sl">Current Period</div><div class="sv">FY2025</div></div>'+
+'<div class="sc"><div class="sl">Data Complete</div><div class="sv">100%</div></div>'+
+'<div class="sc"><div class="sl">Output Format</div><div class="sv">PDF + CSV</div></div></div>';}
+
+// ===== PANTRY PACKS =====
+function pp_overview(){return ''+
+pageHeader('Pantry Packs','FY2025 · Assembly Events & School Distribution')+
+'<div class="sr">'+
+  sc('Packs Assembled','14,820','↑ 18% vs last year','sup')+
+  sc('Schools Served','23','+2 new schools','sup')+
+  sc('Assembly Events','48','sessions this year','sne')+
+  sc('Lbs Distributed','44,460','↑ 16% vs last year','sup')+
+'</div>'+
+'<div class="dt"><div class="dth"><div class="dtt">Recent Assembly Events</div>'+
+'<div class="dta"><button class="btn btn-o" onclick="showTab(\'upload\')">+ Log Event</button></div></div>'+
+'<table><tr><th>Date</th><th>Location</th><th>Volunteers</th><th>Packs</th><th>Lbs</th><th>School</th><th>Status</th></tr>'+
+row(['May 8','Main Warehouse','32','480','1,440','Davis High',badge('Complete','bg')])+
+row(['May 6','Community Room A','18','260','780','Mueller Park Jr High',badge('Complete','bg')])+
+row(['May 3','Main Warehouse','41','610','1,830','Valley View Elem',badge('Complete','bg')])+
+row(['May 15','Main Warehouse','—','—','—','TBD',badge('Scheduled','bb')])+
+'</table></div>'+
+'<div class="rc"><div class="rsh">Current Inventory Snapshot</div>'+
+'<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">'+
+  inv('Peanut Butter','2,840 jars','🟢 Good')+inv('Canned Beans','1,920 cans','🟡 Low')+
+  inv('Pasta','3,100 lbs','🟢 Good')+inv('Cereal','890 boxes','🔴 Reorder')+
+'</div></div>';}
+
+function pp_data(){return ''+
+pageHeader('Assembly Event Records','FY2025 complete log')+
+'<div class="dt"><div class="dth"><div class="dtt">All Events</div>'+
+'<div class="dta"><button class="btn" onclick="toast(\'⬇\',\'Exported!\')">⬇ Export CSV</button>'+
+'<button class="btn btn-o" onclick="showTab(\'upload\')">+ Add</button></div></div>'+
+'<table><tr><th>Date</th><th>Location</th><th>Volunteers</th><th>Packs</th><th>Lbs</th><th>Schools</th><th>Delivered</th></tr>'+
+row(['May 8','Main Warehouse','32','480','1,440','Davis High','Yes'])+
+row(['May 6','Community Room A','18','260','780','Mueller Park Jr High','Yes'])+
+row(['May 3','Main Warehouse','41','610','1,830','Valley View Elem','Yes'])+
+row(['Apr 29','Main Warehouse','28','420','1,260','Bountiful High','Yes'])+
+row(['Apr 26','Community Room A','22','330','990','Millcreek Jr High','Yes'])+
+'</table></div>';}
+
+function pp_upload(){return ''+
+pageHeader('Log an Assembly Event','Record each packing session')+
+'<div class="rc">'+
+'<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;">'+
+fld('Date','date')+fld('Location','text')+
+fld('Number of Volunteers','number')+fld('Packs Assembled','number')+
+fld('Total Weight (lbs)','number')+fld('Schools Delivered To','text')+
+fld('Notes','text')+
+'</div><button class="btn btn-o" onclick="saveEntry(\'Pantry Packs\')">✓ Save Event</button></div>';}
+
+function pp_report(){return ''+
+pageHeader('Pantry Packs Reports','Assembly and distribution summaries')+
+'<div class="rc" style="display:flex;align-items:center;justify-content:space-between;gap:20px;">'+
+'<div><div style="font-size:14px;font-weight:600;margin-bottom:3px;">Generate Pantry Packs Report</div>'+
+'<div style="font-size:12px;color:var(--muted);">48 events · 23 schools · FY2025 data complete.</div></div>'+
+'<button class="btn btn-o" onclick="toast(\'🗒️\',\'Pantry Packs report generated!\')">🗒️ Generate</button></div>'+
+'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">'+
+'<div class="sc"><div class="sl">Current Period</div><div class="sv">FY2025</div></div>'+
+'<div class="sc"><div class="sl">Data Complete</div><div class="sv">100%</div></div>'+
+'<div class="sc"><div class="sl">Output Format</div><div class="sv">PDF + CSV</div></div></div>';}
+
+// ===== GROCERY RESCUE =====
+function gr_overview(){return ''+
+pageHeader('Grocery Rescue','FY2025 · 16 Store Partners · 43% of Total Incoming Food')+
+'<div class="sr">'+
+  sc('Total Rescued (lbs)','1.18M','↑ 22% vs last year','sup')+
+  sc('Store Partners','16','+2 this year','sup')+
+  sc('Weekly Pickups','84','across all partners','sne')+
+  sc('Avg per Pickup','268 lbs','↑ 8% efficiency','sup')+
+'</div>'+
+'<div class="dt"><div class="dth"><div class="dtt">Recent Pickups</div>'+
+'<div class="dta"><button class="btn btn-go" onclick="showTab(\'upload\')">+ Log Pickup</button></div></div>'+
+'<table><tr><th>Date</th><th>Store</th><th>Produce</th><th>Bakery</th><th>Dairy</th><th>Total lbs</th><th>Driver</th></tr>'+
+row(['May 10','Harmons Bountiful','142 lbs','88 lbs','34 lbs','264 lbs','Mike S.'])+
+row(['May 10','Smith\'s Centerville','198 lbs','115 lbs','52 lbs','365 lbs','Rachel T.'])+
+row(['May 10','Costco Bountiful','320 lbs','0','180 lbs','500 lbs','Jim P.'])+
+row(['May 9','Walmart N. Salt Lake','175 lbs','94 lbs','48 lbs','317 lbs','Sara M.'])+
+row(['May 9','Target Bountiful','89 lbs','62 lbs','0','151 lbs','Mike S.'])+
+'</table></div>'+
+'<div class="dt"><div class="dth"><div class="dtt">Top Partners by Volume · FY2025</div></div>'+
+'<table><tr><th>Store</th><th>Pickups</th><th>Total lbs</th><th>Avg/Pickup</th><th>Share</th></tr>'+
+row(['Costco','312','156,000','500 lbs',badge('13.2%','bgo')])+
+row(['Smith\'s (4 locations)','624','218,400','350 lbs',badge('18.5%','bgo')])+
+row(['Walmart (3 locations)','468','140,400','300 lbs',badge('11.9%','bgo')])+
+row(['Harmons','312','93,600','300 lbs',badge('7.9%','bgo')])+
+row(['WinCo','156','54,600','350 lbs',badge('4.6%','bgo')])+
+'</table></div>';}
+
+function gr_data(){return ''+
+pageHeader('All Grocery Rescue Pickups','FY2025 complete pickup log')+
+'<div class="dt"><div class="dth"><div class="dtt">Pickup Log</div>'+
+'<div class="dta"><button class="btn" onclick="toast(\'⬇\',\'Exported!\')">⬇ Export CSV</button></div></div>'+
+'<table><tr><th>Date</th><th>Store</th><th>Produce</th><th>Bakery</th><th>Dairy</th><th>Meat</th><th>Total lbs</th><th>Receipt #</th></tr>'+
+row(['May 10','Harmons Bountiful','142','88','34','0','264','HR-2405-001'])+
+row(['May 10','Smith\'s Centerville','198','115','52','0','365','SM-2405-001'])+
+row(['May 10','Costco Bountiful','320','0','180','0','500','CO-2405-001'])+
+row(['May 9','Walmart N SL','175','94','48','0','317','WM-2405-001'])+
+row(['May 9','Target Bountiful','89','62','0','0','151','TG-2405-001'])+
+'</table></div>';}
+
+function gr_upload(){return ''+
+pageHeader('Log a Grocery Pickup','Record each store rescue pickup')+
+'<div class="rc">'+
+'<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;">'+
+fld('Date','date')+fld('Store Partner','text')+
+fld('Produce (lbs)','number')+fld('Bakery (lbs)','number')+
+fld('Dairy (lbs)','number')+fld('Meat (lbs)','number')+
+fld('Driver','text')+fld('Receipt Number','text')+
+fld('Notes','text')+
+'</div><button class="btn btn-go" onclick="saveEntry(\'Grocery Rescue\')">✓ Save Pickup</button></div>';}
+
+function gr_report(){return ''+
+pageHeader('Grocery Rescue Reports','Partner and volume summaries')+
+'<div class="rc" style="display:flex;align-items:center;justify-content:space-between;gap:20px;">'+
+'<div><div style="font-size:14px;font-weight:600;margin-bottom:3px;">Generate Grocery Rescue Report</div>'+
+'<div style="font-size:12px;color:var(--muted);">16 partners · 84 weekly pickups · FY2025.</div></div>'+
+'<button class="btn btn-go" onclick="toast(\'🗒️\',\'Grocery Rescue report generated!\')">🗒️ Generate</button></div>'+
+'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">'+
+'<div class="sc"><div class="sl">Current Period</div><div class="sv">FY2025</div></div>'+
+'<div class="sc"><div class="sl">Data Complete</div><div class="sv">100%</div></div>'+
+'<div class="sc"><div class="sl">Output Format</div><div class="sv">PDF + CSV</div></div></div>';}
+
+// ===== VOLUNTEERS =====
+function vol_overview(){return ''+
+pageHeader('Volunteer Hub','FY2025 · 44,026 Total Hours Logged')+
+'<div class="sr">'+
+  sc('Total Hours','44,026','↑ 12% vs last year','sup')+
+  sc('Active Volunteers','312','+28 new this year','sup')+
+  sc('Dollar Equivalent','$1.12M','at $25.50/hr rate','sne')+
+  sc('Avg Hours/Vol','141','↑ 8% engagement','sup')+
+'</div>'+
+'<div class="dt"><div class="dth"><div class="dtt">Top Volunteers · FY2025</div>'+
+'<div class="dta"><button class="btn btn-v" onclick="showTab(\'upload\')">+ Log Hours</button></div></div>'+
+'<table><tr><th>Name</th><th>Role</th><th>Hours YTD</th><th>Events</th><th>Since</th><th>Status</th></tr>'+
+row(['Dorothy M.','Route Driver','342','86','2018',badge('Active','bg')])+
+row(['Harold K.','Warehouse Lead','318','79','2019',badge('Active','bg')])+
+row(['Margaret L.','Pack Assembly','297','74','2020',badge('Active','bg')])+
+row(['Bob & June T.','Sort & Pack','281','70','2017',badge('Active','bg')])+
+row(['Church Group A','Group Events','1,240','12','2021',badge('Group','bb')])+
+row(['LDS Ward #14','Assembly Days','980','9','2022',badge('Group','bb')])+
+'</table></div>';}
+
+function vol_data(){return ''+
+pageHeader('Volunteer Hour Log','Complete hours record')+
+'<div class="dt"><div class="dth"><div class="dtt">Recent Hours</div>'+
+'<div class="dta"><button class="btn" onclick="toast(\'⬇\',\'Exported!\')">⬇ Export CSV</button></div></div>'+
+'<table><tr><th>Date</th><th>Volunteer</th><th>Activity</th><th>Hours</th><th>Verified</th></tr>'+
+row(['May 10','Dorothy M.','Mobile Pantry Route','4.0','Yes'])+
+row(['May 10','Harold K.','Warehouse Intake','6.0','Yes'])+
+row(['May 10','Margaret L.','Pack Assembly','3.5','Yes'])+
+row(['May 9','Bob T.','Sort & Distribution','5.0','Yes'])+
+row(['May 8','Church Group A','Assembly Event','84.0','Yes'])+
+'</table></div>';}
+
+function vol_upload(){return ''+
+pageHeader('Log Volunteer Hours','Record hours for any volunteer or group')+
+'<div class="rc">'+
+'<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;">'+
+fld('Date','date')+fld('Volunteer Name or Group','text')+
+fld('Activity / Program','text')+fld('Hours','number')+
+fld('Notes','text')+
+'</div><button class="btn btn-v" onclick="saveEntry(\'Volunteer Hub\')">✓ Save Hours</button></div>';}
+
+function vol_report(){return ''+
+pageHeader('Volunteer Reports','Hours, impact, and engagement summaries')+
+'<div class="rc" style="display:flex;align-items:center;justify-content:space-between;gap:20px;">'+
+'<div><div style="font-size:14px;font-weight:600;margin-bottom:3px;">Generate Volunteer Report</div>'+
+'<div style="font-size:12px;color:var(--muted);">312 active volunteers · 44,026 hours · FY2025.</div></div>'+
+'<button class="btn btn-v" onclick="toast(\'🗒️\',\'Volunteer report generated!\')">🗒️ Generate</button></div>'+
+'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">'+
+'<div class="sc"><div class="sl">Current Period</div><div class="sv">FY2025</div></div>'+
+'<div class="sc"><div class="sl">Data Complete</div><div class="sv">100%</div></div>'+
+'<div class="sc"><div class="sl">In-Kind Value</div><div class="sv">$1.12M</div></div></div>';}
+
+// ===== UPLOAD HUB =====
+function upload_overview(){return ''+
+pageHeader('Upload Data','Import historical records to bring the system up to date')+
+
+'<div class="rc" style="margin-bottom:22px;">'+
+'<div class="rsh">How It Works</div>'+
+'<div class="import-steps">'+
+'<div class="import-step"><div class="is-num">1</div><div class="is-label">Choose Module</div></div>'+
+'<div class="import-step"><div class="is-num">2</div><div class="is-label">Drop CSV File</div></div>'+
+'<div class="import-step"><div class="is-num">3</div><div class="is-label">Review Preview</div></div>'+
+'<div class="import-step"><div class="is-num" style="background:var(--g);">✓</div><div class="is-label">Data Imported</div></div>'+
+'</div></div>'+
+
+'<div class="upload-hub-grid">'+
+
+'<div class="upload-module-card">'+
+'<div class="umc-header"><div class="umc-icon" style="background:var(--gl);color:var(--g);">🚌</div>'+
+'<div><div class="umc-title">Mobile Pantry</div><div class="umc-sub">Route stops, households, individuals</div></div></div>'+
+'<div class="uz-sm" onclick="uploadAnim(\'Mobile Pantry\')">'+
+'<div class="ui">📁</div><div class="uz-sm-text"><div class="uz-sm-title">Drop CSV or click to browse</div>'+
+'<div class="uz-sm-sub">Accepts .csv · matches PantrySoft export</div></div></div></div>'+
+
+'<div class="upload-module-card">'+
+'<div class="umc-header"><div class="umc-icon" style="background:var(--ol);color:var(--o);">📦</div>'+
+'<div><div class="umc-title">Pantry Packs</div><div class="umc-sub">Assembly events, packs, school delivery</div></div></div>'+
+'<div class="uz-sm" onclick="uploadAnim(\'Pantry Packs\')">'+
+'<div class="ui">📁</div><div class="uz-sm-text"><div class="uz-sm-title">Drop CSV or click to browse</div>'+
+'<div class="uz-sm-sub">Accepts .csv or .xlsx</div></div></div></div>'+
+
+'<div class="upload-module-card">'+
+'<div class="umc-header"><div class="umc-icon" style="background:var(--gol);color:var(--go);">🛒</div>'+
+'<div><div class="umc-title">Grocery Rescue</div><div class="umc-sub">Store pickups, pounds by category</div></div></div>'+
+'<div class="uz-sm" onclick="uploadAnim(\'Grocery Rescue\')">'+
+'<div class="ui">📁</div><div class="uz-sm-text"><div class="uz-sm-title">Drop CSV or click to browse</div>'+
+'<div class="uz-sm-sub">Accepts .csv or .xlsx</div></div></div></div>'+
+
+'<div class="upload-module-card">'+
+'<div class="umc-header"><div class="umc-icon" style="background:var(--vl);color:var(--v);">🤝</div>'+
+'<div><div class="umc-title">Volunteers</div><div class="umc-sub">Hours, events, groups</div></div></div>'+
+'<div class="uz-sm" onclick="uploadAnim(\'Volunteers\')">'+
+'<div class="ui">📁</div><div class="uz-sm-text"><div class="uz-sm-title">Drop CSV or click to browse</div>'+
+'<div class="uz-sm-sub">Accepts .csv · any hour log format</div></div></div></div>'+
+
+'<div class="upload-module-card">'+
+'<div class="umc-header"><div class="umc-icon" style="background:var(--qbl);color:var(--qb);">💚</div>'+
+'<div><div class="umc-title">QuickBooks / Finance</div><div class="umc-sub">Transactions, grants, expenses</div></div></div>'+
+'<div class="uz-sm" onclick="uploadAnim(\'QuickBooks\')">'+
+'<div class="ui">📁</div><div class="uz-sm-text"><div class="uz-sm-title">Drop CSV or click to browse</div>'+
+'<div class="uz-sm-sub">Accepts QuickBooks .csv export</div></div></div></div>'+
+
+'<div class="upload-module-card">'+
+'<div class="umc-header"><div class="umc-icon" style="background:var(--bl);color:var(--b);">📊</div>'+
+'<div><div class="umc-title">Inventory</div><div class="umc-sub">Monthly counts, incoming/outgoing</div></div></div>'+
+'<div class="uz-sm" onclick="uploadAnim(\'Inventory\')">'+
+'<div class="ui">📁</div><div class="uz-sm-text"><div class="uz-sm-title">Drop CSV or click to browse</div>'+
+'<div class="uz-sm-sub">Accepts .csv or .xlsx</div></div></div></div>'+
+
+'</div>';}
+
+function upload_history(){return ''+
+pageHeader('Import History','Record of all data imports')+
+'<div class="dt"><div class="dth"><div class="dtt">Recent Imports</div></div>'+
+'<table><tr><th>Date</th><th>Module</th><th>File</th><th>Records</th><th>Status</th></tr>'+
+row(['May 13','Grocery Rescue','gr_fy2024_full.csv','2,184',badge('Complete','bg')])+
+row(['May 12','Mobile Pantry','mobile_pantry_fy2023-24.csv','428',badge('Complete','bg')])+
+row(['May 12','Volunteers','vol_hours_2022-2024.csv','1,906',badge('Complete','bg')])+
+row(['May 10','Pantry Packs','packs_fy2024.csv','312',badge('Complete','bg')])+
+row(['May 9','QuickBooks','qb_export_fy2024.csv','884',badge('Complete','bg')])+
+'</table></div>';}
+
+// ===== PRICE LOCK =====
+function pricelock_overview(){return ''+
+pageHeader('Food Price Lock','Set the Feeding America price per pound to calculate food values')+
+
+'<div class="pl-banner">'+
+'<div class="pl-icon">🔒</div>'+
+'<div>'+
+'<div class="pl-status-active">Current Price Lock — FY2025</div>'+
+'<div class="pl-status-sub">Locked July 1, 2024 · Covers Jul 1, 2024 – Jun 30, 2025</div>'+
+'<div style="margin-top:6px;font-size:12px;color:var(--muted);">⏳ Awaiting FY2025 Feeding America release (expected August 2025) to finalize food values</div>'+
+'</div>'+
+'<div style="text-align:right;">'+
+'<div style="font-size:11px;color:var(--muted);margin-bottom:2px;">Current locked price</div>'+
+'<div style="font-family:\'DM Serif Display\',serif;font-size:32px;color:#0369a1;">$0.00<span style="font-size:16px;opacity:.6;">/lb</span></div>'+
+'<div style="font-size:11px;color:var(--muted);">Pending — values show $0 until locked</div>'+
+'</div>'+
+'</div>'+
+
+'<div class="lock-card">'+
+'<h3>Set New Price Lock</h3>'+
+'<p>When Feeding America releases the official price per pound, enter it here. The system will automatically calculate the food value for every pound entered during this fiscal year.</p>'+
+'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:16px;">'+
+'<div class="fld-wrap"><label>Fiscal Year</label><select><option>FY2025 (Jul 2024 – Jun 2025)</option><option>FY2026 (Jul 2025 – Jun 2026)</option></select></div>'+
+'<div class="fld-wrap"><label>Price Per Pound ($)</label><input type="number" placeholder="e.g. 1.74" step="0.01"/></div>'+
+'<div class="fld-wrap"><label>Lock Date</label><input type="date"/></div>'+
+'</div>'+
+'<div style="background:#f0f9ff;border-radius:10px;padding:14px;margin-bottom:16px;font-size:12.5px;color:#0369a1;border:1px solid rgba(14,165,233,.2);">'+
+'<strong>What happens when you lock:</strong> The system will go back through all '+
+'<strong>847,200 lbs</strong> entered this fiscal year and calculate their dollar value using your locked price. '+
+'All reports will update automatically — no manual work needed.'+
+'</div>'+
+'<button class="btn btn-pl" onclick="showLockConfirm()">🔒 Lock Price for FY2025</button>'+
+'</div>';}
+
+function showLockConfirm(){
+  modal('<div class="mot">Confirm Price Lock</div>'+
+  '<div class="mos">This will calculate food values for all FY2025 entries.</div>'+
+  '<div style="background:#f0f9ff;border-radius:10px;padding:16px;margin-bottom:16px;border:1px solid rgba(14,165,233,.2);">'+
+  '<div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:13px;">'+
+  '<span style="color:var(--muted);">Price per pound</span><strong>$1.74</strong></div>'+
+  '<div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:13px;">'+
+  '<span style="color:var(--muted);">Fiscal year covered</span><strong>Jul 1, 2024 – Jun 30, 2025</strong></div>'+
+  '<div style="display:flex;justify-content:space-between;font-size:13px;">'+
+  '<span style="color:var(--muted);">Total lbs to calculate</span><strong>847,200 lbs</strong></div>'+
+  '</div>'+
+  '<div style="display:flex;gap:8px;">'+
+  '<button class="btn btn-pl" onclick="runPriceLock()">✓ Confirm & Lock</button>'+
+  '<button class="btn" onclick="closeModal()">Cancel</button>'+
+  '</div>');
+}
+
+function runPriceLock(){
+  document.getElementById('mc2').innerHTML=
+  '<div class="mot">Calculating Food Values</div>'+
+  '<div class="mos">Applying $1.74/lb to all FY2025 entries...</div>'+
+  '<div class="mop"><div class="mopb" id="pb" style="width:0%"></div></div>'+
+  '<div class="mst" id="mst">'+
+  '<div class="msi"><div class="sc2 sa" id="ss1">1</div><span>Processing Mobile Pantry food records</span></div>'+
+  '<div class="msi"><div class="sc2 sp" id="ss2">2</div><span>Processing Grocery Rescue pickups</span></div>'+
+  '<div class="msi"><div class="sc2 sp" id="ss3">3</div><span>Processing Pantry Pack distributions</span></div>'+
+  '<div class="msi"><div class="sc2 sp" id="ss4">4</div><span>Updating all reports and totals</span></div>'+
+  '</div><div id="md" style="display:none;text-align:center;padding:10px 0;">'+
+  '<div style="font-size:32px;margin-bottom:8px;">🔒</div>'+
+  '<div style="font-size:15px;font-weight:600;margin-bottom:4px;">Price Locked — FY2025</div>'+
+  '<div style="font-size:12px;color:var(--muted);margin-bottom:6px;">847,200 lbs valued at $1.74/lb</div>'+
+  '<div style="font-family:\'DM Serif Display\',serif;font-size:24px;color:var(--g);margin-bottom:12px;">$1,474,128 total food value</div>'+
+  '<button class="btn btn-pl" onclick="closeModal();showTab(\'impact\')">View Monthly Breakdown →</button>'+
+  '</div>';
+  runSteps(['pb'],['28%','55%','80%','100%'],['ss1','ss2','ss3','ss4'],600);
+}
+
+function pricelock_history(){return ''+
+pageHeader('Lock History','Audit trail of all price locks by fiscal year')+
+'<div class="rc">'+
+'<div class="rsh">Historical Price Locks</div>'+
+
+'<div class="price-history-row">'+
+'<div><div class="ph-period">FY2025 · Current Year</div><div class="ph-range">July 1, 2024 – June 30, 2025</div></div>'+
+'<div style="text-align:right;"><div class="ph-price">—</div><div class="ph-value">Pending Feeding America release</div>'+
+'<div style="margin-top:4px;">'+badge('Awaiting Lock','bpl')+'</div></div>'+
+'</div>'+
+
+'<div class="price-history-row">'+
+'<div><div class="ph-period">FY2024</div><div class="ph-range">July 1, 2023 – June 30, 2024</div></div>'+
+'<div style="text-align:right;"><div class="ph-price">$1.74/lb</div><div class="ph-value">Locked Aug 12, 2024 · 798,400 lbs · $1,389,216 total</div>'+
+'<div style="margin-top:4px;"><span class="ph-locked">🔒 Locked</span></div></div>'+
+'</div>'+
+
+'<div class="price-history-row">'+
+'<div><div class="ph-period">FY2023</div><div class="ph-range">July 1, 2022 – June 30, 2023</div></div>'+
+'<div style="text-align:right;"><div class="ph-price">$1.62/lb</div><div class="ph-value">Locked Aug 8, 2023 · 641,200 lbs · $1,038,744 total</div>'+
+'<div style="margin-top:4px;"><span class="ph-locked">🔒 Locked</span></div></div>'+
+'</div>'+
+
+'<div class="price-history-row">'+
+'<div><div class="ph-period">FY2022</div><div class="ph-range">July 1, 2021 – June 30, 2022</div></div>'+
+'<div style="text-align:right;"><div class="ph-price">$1.50/lb</div><div class="ph-value">Locked Sep 2, 2022 · 512,800 lbs · $769,200 total</div>'+
+'<div style="margin-top:4px;"><span class="ph-locked">🔒 Locked</span></div></div>'+
+'</div>'+
+
+'</div>';}
+
+function pricelock_impact(){return ''+
+pageHeader('Value by Month','Monthly food value breakdown — calculated after price lock')+
+
+'<div style="background:var(--white);border-radius:12px;border:1px solid var(--bdr);padding:20px;margin-bottom:20px;box-shadow:var(--shadow);">'+
+'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">'+
+'<div><div style="font-size:14px;font-weight:600;">FY2024 — Locked at $1.74/lb</div>'+
+'<div style="font-size:12px;color:var(--muted);">All values calculated after August 2024 price lock</div></div>'+
+'<span class="ph-locked" style="font-size:11px;padding:5px 12px;">🔒 Locked · $1.74/lb</span>'+
+'</div>'+
+'<table><tr><th>Month</th><th>Lbs Entered</th><th>Food Value</th><th>Status</th></tr>'+
+row(['July 2023','62,400 lbs','$108,576',badge('Calculated','bg')])+
+row(['August 2023','58,800 lbs','$102,312',badge('Calculated','bg')])+
+row(['September 2023','71,200 lbs','$123,888',badge('Calculated','bg')])+
+row(['October 2023','84,600 lbs','$147,204',badge('Calculated','bg')])+
+row(['November 2023','92,100 lbs','$160,254',badge('Calculated','bg')])+
+row(['December 2023','88,400 lbs','$153,816',badge('Calculated','bg')])+
+row(['January 2024','76,200 lbs','$132,588',badge('Calculated','bg')])+
+row(['February 2024','64,800 lbs','$112,752',badge('Calculated','bg')])+
+row(['March 2024','68,400 lbs','$119,016',badge('Calculated','bg')])+
+row(['April 2024','72,600 lbs','$126,324',badge('Calculated','bg')])+
+row(['May 2024','78,900 lbs','$137,286',badge('Calculated','bg')])+
+row(['June 2024','80,000 lbs','$139,200',badge('Calculated','bg')])+
+'<tr style="background:#f8fbf8;font-weight:700;"><td>FY2024 Total</td><td>798,400 lbs</td><td style="color:var(--g);">$1,389,216</td><td>'+badge('Complete','bg')+'</td></tr>'+
+'</table></div>'+
+
+'<div style="background:var(--white);border-radius:12px;border:1px solid var(--bdr);padding:20px;box-shadow:var(--shadow);">'+
+'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">'+
+'<div><div style="font-size:14px;font-weight:600;">FY2025 — Awaiting Lock</div>'+
+'<div style="font-size:12px;color:var(--muted);">Values will calculate automatically once FY2025 price is locked in August 2025</div></div>'+
+'<span class="badge bpl">⏳ Pending</span>'+
+'</div>'+
+'<table><tr><th>Month</th><th>Lbs Entered</th><th>Food Value</th><th>Status</th></tr>'+
+row(['July 2024','68,400 lbs','<span style="color:var(--muted);">—</span>',badge('Awaiting lock','bpl')])+
+row(['August 2024','72,100 lbs','<span style="color:var(--muted);">—</span>',badge('Awaiting lock','bpl')])+
+row(['September 2024','79,200 lbs','<span style="color:var(--muted);">—</span>',badge('Awaiting lock','bpl')])+
+row(['October 2024','88,600 lbs','<span style="color:var(--muted);">—</span>',badge('Awaiting lock','bpl')])+
+row(['November 2024','94,800 lbs','<span style="color:var(--muted);">—</span>',badge('Awaiting lock','bpl')])+
+row(['December 2024','91,400 lbs','<span style="color:var(--muted);">—</span>',badge('Awaiting lock','bpl')])+
+'<tr style="background:#f0f9ff;font-weight:600;"><td>FY2025 YTD</td><td>494,500 lbs</td><td style="color:var(--muted);">Calculating after August 2025 lock</td><td>'+badge('In progress','bpl')+'</td></tr>'+
+'</table>'+
+'<div style="margin-top:14px;padding:12px 16px;background:#f0f9ff;border-radius:9px;border:1px solid rgba(14,165,233,.2);font-size:12.5px;color:#0369a1;">'+
+'💡 <strong>At $1.74/lb</strong> (last year\'s rate), the 494,500 lbs entered so far would be worth approximately <strong>$860,430</strong>. Final value will be confirmed when Feeding America releases FY2025 pricing.'+
+'</div></div>';}
+
+// ===== REPORTS =====
+function report_overview(){return ''+
+pageHeader('Reports & Board Documents','Generate board packets and year-over-year reports in minutes')+
+'<div style="background:linear-gradient(135deg,#1e3a5f,#2d5a8e);border-radius:14px;padding:26px;color:#fff;margin-bottom:22px;display:flex;align-items:center;justify-content:space-between;gap:16px;">'+
+'<div><div style="font-size:10px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;opacity:.7;margin-bottom:8px;">One-Click Generation</div>'+
+'<div style="font-family:\'DM Serif Display\',serif;font-size:22px;margin-bottom:5px;">Generate Board Report Packet</div>'+
+'<div style="font-size:12.5px;opacity:.8;">Pulls all FY2025 data, calculates year-over-year comparisons, formats a ready-to-present board packet.</div></div>'+
+'<button onclick="startBoardReport()" style="background:#fff;color:#1e3a5f;border:none;padding:13px 24px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;font-family:inherit;">🗒️ Generate Now</button></div>'+
+
+'<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">'+
+'<div class="dt"><div class="dth"><div class="dtt">Recent Reports</div></div>'+
+'<table><tr><th>Report</th><th>Date</th><th></th></tr>'+
+'<tr><td>Q3 FY2025 Summary</td><td>Apr 30</td><td><button class="btn" onclick="toast(\'⬇\',\'Downloading...\')">⬇</button></td></tr>'+
+'<tr><td>Feb 2025 Board Packet</td><td>Feb 28</td><td><button class="btn" onclick="toast(\'⬇\',\'Downloading...\')">⬇</button></td></tr>'+
+'<tr><td>Annual Report FY2024</td><td>Jul 15, 2024</td><td><button class="btn" onclick="toast(\'⬇\',\'Downloading...\')">⬇</button></td></tr>'+
+'</table></div>'+
+'<div class="dt"><div class="dth"><div class="dtt">Scheduled Reports</div></div>'+
+'<table><tr><th>Report</th><th>Next Run</th></tr>'+
+'<tr><td>Monthly KPI Summary</td><td>'+badge('Jun 1','bg')+'</td></tr>'+
+'<tr><td>Board Packet</td><td>'+badge('Jul 1','bb')+'</td></tr>'+
+'<tr><td>Volunteer Hours</td><td>'+badge('May 17','bg')+'</td></tr>'+
+'</table></div></div>';}
+
+function report_quickbooks(){return ''+
+pageHeader('QuickBooks Sync','Connected to QuickBooks Online · No Replay USA NA Inc')+
+'<div style="background:linear-gradient(135deg,#edf9eb,#d4f5d0);border-radius:12px;padding:18px 20px;border:1.5px solid rgba(44,160,28,.22);margin-bottom:20px;display:flex;align-items:center;gap:14px;">'+
+'<div style="font-size:28px;">✅</div>'+
+'<div style="flex:1;"><div style="font-size:14px;font-weight:600;color:#1a5c14;">QuickBooks Online — Connected</div>'+
+'<div style="font-size:12px;color:#2a7a22;">Last synced: Today, 8:42 AM</div></div>'+
+'<button class="btn btn-qb" onclick="toast(\'🔄\',\'Syncing with QuickBooks...\')">Sync Now</button></div>'+
+'<div class="sr">'+
+  sc('Revenue YTD','$1.479M','↑ 45.7% vs last year','sup')+
+  sc('Expenses YTD','$1.312M','88.7% expense ratio','sne')+
+  sc('Unreconciled','3','transactions pending','sne')+
+  sc('Active Grants','12','tracked in QB','sne')+
+'</div>'+
+'<div class="dt"><div class="dth"><div class="dtt">Recent Transactions — Auto-Synced</div></div>'+
+'<table><tr><th>Date</th><th>Description</th><th>Category</th><th>Amount</th><th>QB Status</th></tr>'+
+'<tr><td>May 10</td><td>Grocery Rescue Transport Fuel</td><td>Program Expense</td><td style="color:#c0392b;">-$142.50</td><td>'+badge('Synced ✓','bqb')+'</td></tr>'+
+'<tr><td>May 9</td><td>USDA CSFP Grant Deposit</td><td>Grant Revenue</td><td style="color:#2d7a45;">+$28,400</td><td>'+badge('Synced ✓','bqb')+'</td></tr>'+
+'<tr><td>May 8</td><td>Community Donation</td><td>Donation Revenue</td><td style="color:#2d7a45;">+$500</td><td>'+badge('Synced ✓','bqb')+'</td></tr>'+
+'<tr><td>May 7</td><td>Volunteer Mileage Reimbursement</td><td>Program Expense</td><td style="color:#c0392b;">-$89.20</td><td>'+badge('Pending ⏳','bgo')+'</td></tr>'+
+'</table></div>'+
+'<div class="rc"><div class="rsh">What Auto-Syncs to QuickBooks</div>'+
+'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">'+
+  qbmap('🛒 Grocery Rescue','Transport & labor costs → QB: Program Expense · Grocery Rescue class')+
+  qbmap('🚌 Mobile Pantry','Route operating costs → QB: Program Expense · Mobile Pantry class')+
+  qbmap('📦 Pantry Packs','Assembly supplies → QB: Program Expense · Pantry Pack class')+
+  qbmap('🤝 Volunteers','In-kind hours → QB: In-Kind Contributions')+
+  qbmap('💵 Donations','Every donation logged → QB: 4100 Donation Revenue')+
+  qbmap('🏛️ Grants','Grant deposits & drawdowns → QB grant tracking')+
+'</div></div>';}
+
+function report_data(){return ''+
+pageHeader('Year-Over-Year Metrics','Compare key performance indicators across fiscal years')+
+'<div class="rc"><div class="rsh">FY2025 vs FY2024</div>'+
+'<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">'+
+kpi2('Total Pounds Tracked','2,750,000 lbs','2,120,000 lbs','↑ 30%')+
+kpi2('Households Served','102,209','93,962','↑ 9.4%')+
+kpi2('Total Revenue','$1,479,082','$1,014,510','↑ 45.7%')+
+kpi2('Volunteer Hours','44,026 hrs','39,312 hrs','↑ 12.0%')+
+kpi2('Grocery Rescue lbs','1,182,500','968,000','↑ 22.2%')+
+kpi2('Mobile Pantry HH','8,342','7,318','↑ 14.0%')+
+'</div></div>';}
+
+function report_upload(){return ''+
+pageHeader('Import Source Data','Upload PantrySoft exports, QuickBooks reports, or spreadsheet backups')+
+'<div class="uz" onclick="uploadAnim(\'Source Data\')">'+
+'<div class="ui">📊</div><div class="ut">Drop any data file here</div>'+
+'<div class="us">PantrySoft exports · QuickBooks .csv · Excel workbooks · Any format</div></div>';}
+
+function startBoardReport(){
+  modal('<div class="mot">Generating Board Report Packet</div>'+
+  '<div class="mos">Pulling FY2025 data across all modules...</div>'+
+  '<div class="mop"><div class="mopb" id="pb" style="width:0%"></div></div>'+
+  '<div class="mst" id="mst">'+
+  '<div class="msi"><div class="sc2 sa" id="ss1">1</div><span>Compiling Grocery Rescue & Pantry Pack data</span></div>'+
+  '<div class="msi"><div class="sc2 sp" id="ss2">2</div><span>Compiling Mobile Pantry route data</span></div>'+
+  '<div class="msi"><div class="sc2 sp" id="ss3">3</div><span>Calculating year-over-year comparisons</span></div>'+
+  '<div class="msi"><div class="sc2 sp" id="ss4">4</div><span>Formatting 18-page board packet PDF</span></div>'+
+  '</div><div id="md" style="display:none;text-align:center;padding:10px 0;">'+
+  '<div style="font-size:32px;margin-bottom:8px;">🗒️</div>'+
+  '<div style="font-size:15px;font-weight:600;margin-bottom:4px;">Board Report Ready!</div>'+
+  '<div style="font-size:12px;color:var(--muted);margin-bottom:14px;">July audit prep: <strong>2 minutes</strong> instead of a month.</div>'+
+  '<div style="display:flex;gap:8px;justify-content:center;">'+
+  '<button class="btn btn-b" onclick="closeModal();showBoardReport()">Preview Full Report →</button>'+
+  '<button class="btn" onclick="closeModal();toast(\'⬇\',\'Downloading PDF...\')">Download PDF</button>'+
+  '</div></div>');
+  runSteps(['pb'],['25%','55%','80%','100%'],['ss1','ss2','ss3','ss4'],650);
+}
+
+function showBoardReport(){
+  document.getElementById('mc').innerHTML=boardReportHTML();
+  setNav('n-overview');
+}
+
+function boardReportHTML(){
+  return '<div style="max-width:780px;margin:0 auto;">'+
+'<button class="btn" onclick="showTab(\'overview\')" style="margin-bottom:18px;">← Back to Reports</button>'+
+'<div style="background:var(--white);border-radius:14px;border:1px solid var(--bdr);overflow:hidden;box-shadow:var(--shadow-lg);">'+
+'<div style="background:linear-gradient(135deg,#1e3a5f,#2d5a8e);padding:42px;color:#fff;">'+
+'<div style="font-size:10px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;opacity:.7;margin-bottom:14px;">Board of Directors · Quarterly Report</div>'+
+'<div style="font-family:\'DM Serif Display\',serif;font-size:30px;line-height:1.2;margin-bottom:6px;">Bountiful Food Pantry</div>'+
+'<div style="font-family:\'DM Serif Display\',serif;font-size:18px;font-style:italic;opacity:.85;margin-bottom:20px;">Fiscal Year 2025 · Q3 Report</div>'+
+'<div style="display:flex;gap:28px;flex-wrap:wrap;opacity:.9;">'+
+'<div><div style="font-size:10px;text-transform:uppercase;opacity:.7;">Period</div><div style="font-size:13px;font-weight:600;">January – March 2025</div></div>'+
+'<div><div style="font-size:10px;text-transform:uppercase;opacity:.7;">Prepared</div><div style="font-size:13px;font-weight:600;">May 14, 2025</div></div>'+
+'<div><div style="font-size:10px;text-transform:uppercase;opacity:.7;">Organization</div><div style="font-size:13px;font-weight:600;">Bountiful Food Pantry</div></div>'+
+'</div></div>'+
+'<div style="padding:30px 36px;">'+
+'<div class="brsec"><div class="brh">Executive Summary</div>'+
+'<p style="font-size:13px;line-height:1.8;color:var(--muted);">Bountiful Food Pantry continues to demonstrate exceptional growth during FY2025. Total pounds tracked have increased <strong style="color:var(--txt);">30% year-over-year</strong> to 2.75 million pounds, while households served have grown <strong style="color:var(--txt);">9.4% to 102,209 families</strong>. Revenue has increased <strong style="color:var(--txt);">45.7% to $1,479,082</strong>, driven by expanded grant funding and community donations. Volunteer engagement remains strong at 44,026 hours, representing approximately <strong style="color:var(--txt);">$1.12 million in contributed services</strong>.</p></div>'+
+'<div class="brsec"><div class="brh">Key Performance Indicators · FY2025 vs FY2024</div>'+
+'<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;">'+
+kpi2('Total Pounds Tracked','2,750,000 lbs','2,120,000 lbs','↑ 30%')+
+kpi2('Households Served','102,209','93,962','↑ 9.4%')+
+kpi2('Total Revenue','$1,479,082','$1,014,510','↑ 45.7%')+
+kpi2('Volunteer Hours','44,026 hrs','39,312 hrs','↑ 12.0%')+
+kpi2('Grocery Rescue lbs','1,182,500','968,000','↑ 22.2%')+
+kpi2('Mobile Pantry HH','8,342','7,318','↑ 14.0%')+
+'</div></div>'+
+'<div class="brsec"><div class="brh">Financial Summary · FY2025 YTD</div>'+
+'<table style="width:100%;border-collapse:collapse;font-size:13px;">'+
+'<tr style="background:#f0f4f8;"><th style="padding:10px 13px;text-align:left;color:#1e3a5f;font-weight:600;">Revenue Source</th><th style="padding:10px 13px;text-align:right;color:#1e3a5f;font-weight:600;">Amount</th><th style="padding:10px 13px;text-align:right;color:#1e3a5f;font-weight:600;">% Total</th></tr>'+
+frow('USDA / CSFP Grants','$612,000','41.4%')+
+frow('Community Donations','$384,000','26.0%')+
+frow('Davis County Grants','$248,000','16.8%')+
+frow('Corporate Sponsorships','$142,000','9.6%')+
+frow('Events & Fundraising','$93,082','6.3%')+
+'<tr style="background:#f8fbf8;font-weight:700;"><td style="padding:10px 13px;">Total Revenue</td><td style="padding:10px 13px;text-align:right;color:var(--g);">$1,479,082</td><td style="padding:10px 13px;text-align:right;">100%</td></tr>'+
+'</table></div>'+
+'<div class="brsec"><div class="brh">Program Highlights</div>'+
+pghl('🛒','Grocery Rescue','43% of all incoming food now comes from our 16 store partners. Costco alone contributed 156,000 lbs this year. We added 2 new partners in Q2.')+
+pghl('🚌','Mobile Pantry','18 active stops across Davis County served 8,342 unique households — a 14% increase. Seniors 55+ make up 41% of those served.')+
+pghl('📦','Pantry Packs','14,820 weekend food packs assembled and delivered to 23 partner schools. Assembly is now supported by 48 volunteer events per year.')+
+pghl('🤝','Volunteers','312 active volunteers contributed 44,026 hours — equivalent to ~21 full-time employees.')+
+'</div>'+
+'<div class="brsec"><div class="brh">Board Action Items</div>'+
+'<table style="width:100%;border-collapse:collapse;font-size:13px;">'+
+'<tr style="background:#f0f4f8;"><th style="padding:10px 13px;text-align:left;color:#1e3a5f;">Item</th><th style="padding:10px 13px;text-align:left;color:#1e3a5f;">Owner</th><th style="padding:10px 13px;text-align:left;color:#1e3a5f;">Due</th><th style="padding:10px 13px;text-align:left;color:#1e3a5f;">Status</th></tr>'+
+brow('Approve FY2026 budget proposal','Executive Director','Jun 30','Pending vote')+
+brow('Review USDA grant renewal application','Board Chair','May 31','In review')+
+brow('Authorize second warehouse expansion','Operations','Jul 1','Pending approval')+
+brow('Annual audit report review','Finance Committee','Jun 15','Scheduled')+
+'</table></div>'+
+'<div style="font-size:11px;color:var(--muted);text-align:center;padding:14px 0;border-top:1px solid var(--bdr);">'+
+'Generated automatically · Bountiful Food Pantry Operations System · May 14, 2025 · <span style="color:var(--qb);">✓ Synced with QuickBooks Online</span></div>'+
+'</div></div>'+
+'<div style="display:flex;gap:8px;margin-top:16px;justify-content:flex-end;">'+
+'<button class="btn btn-b" onclick="toast(\'⬇\',\'Downloading 18-page board packet PDF...\')">⬇ Download PDF</button>'+
+'<button class="btn" onclick="toast(\'✉️\',\'Emailed to 7 board members!\')">✉️ Email to Board</button>'+
+'<button class="btn" onclick="toast(\'🔗\',\'Share link copied!\')">🔗 Share Link</button>'+
+'</div></div>';}
+</script>
+</body>
+</html>
