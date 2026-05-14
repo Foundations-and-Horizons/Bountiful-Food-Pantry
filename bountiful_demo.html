@@ -8,1200 +8,769 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 :root{
-  --pantry-green:#2d7a45;
-  --pantry-light:#e8f5ed;
-  --pantry-orange:#e07b39;
-  --pantry-orange-light:#fdf0e6;
-  --pantry-gold:#c9a227;
-  --pantry-gray:#6b7280;
-  --pantry-bg:#f7f9f7;
-  --white:#ffffff;
-  --border:#e2e8e4;
-  --text:#1a2e1f;
-  --text-muted:#5a7263;
+  --g:#2d7a45;--gl:#e8f5ed;--o:#e07b39;--ol:#fdf0e6;
+  --go:#c9a227;--gol:#fdf8e6;--b:#1e3a5f;--bl:#e6edf7;
+  --qb:#2ca01c;--qbl:#edf9eb;--v:#5b6af0;--vl:#eef0ff;
+  --bg:#f7f9f7;--white:#fff;--bdr:#e2e8e4;
+  --txt:#1a2e1f;--muted:#5a7263;
 }
-html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--pantry-bg);color:var(--text);}
+html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--txt);overflow-x:hidden;}
 
-/* PORTAL */
-#portal{position:fixed;inset:0;z-index:100;background:var(--pantry-bg);display:flex;align-items:center;justify-content:center;overflow-y:auto;padding:40px 20px;}
-.bg-circle{position:fixed;border-radius:50%;pointer-events:none;z-index:0;}
-.bg1{top:-100px;right:-100px;width:500px;height:500px;background:radial-gradient(circle,rgba(45,122,69,0.07),transparent 70%);}
-.bg2{bottom:-80px;left:-80px;width:400px;height:400px;background:radial-gradient(circle,rgba(224,123,57,0.08),transparent 70%);}
-.portal-wrapper{position:relative;z-index:1;width:100%;max-width:860px;display:flex;flex-direction:column;align-items:center;}
-.portal-header{text-align:center;margin-bottom:48px;animation:fadeUp .6s ease both;}
-.portal-eyebrow{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--pantry-green);margin-bottom:10px;}
-.portal-title{font-family:'DM Serif Display',serif;font-size:clamp(28px,5vw,48px);font-weight:400;color:var(--text);line-height:1.2;margin-bottom:12px;}
-.portal-title span{color:var(--pantry-green);font-style:italic;}
-.portal-sub{font-size:14px;color:var(--text-muted);max-width:380px;margin:0 auto;line-height:1.6;}
-.portal-stats{display:flex;gap:20px;margin-top:28px;justify-content:center;flex-wrap:wrap;}
-.pstat{text-align:center;background:rgba(255,255,255,0.92);border-radius:12px;padding:14px 22px;border:1.5px solid rgba(45,122,69,0.15);min-width:130px;}
-.pstat-num{font-family:'DM Serif Display',serif;font-size:26px;color:var(--pantry-green);font-weight:400;}
-.pstat-lbl{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;}
+/* ---- PORTAL ---- */
+#portal{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 20px;position:relative;overflow:hidden;}
+.bc{position:fixed;border-radius:50%;pointer-events:none;}
+.bc1{top:-120px;right:-120px;width:500px;height:500px;background:radial-gradient(circle,rgba(45,122,69,.07),transparent 70%);}
+.bc2{bottom:-80px;left:-80px;width:400px;height:400px;background:radial-gradient(circle,rgba(224,123,57,.08),transparent 70%);}
+.pw{position:relative;z-index:1;width:100%;max-width:900px;display:flex;flex-direction:column;align-items:center;}
+.ph{text-align:center;margin-bottom:40px;animation:fu .6s ease both;}
+.pe{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--g);margin-bottom:8px;}
+.pt{font-family:'DM Serif Display',serif;font-size:clamp(32px,6vw,52px);font-weight:400;color:var(--txt);line-height:1.15;margin-bottom:10px;}
+.pt span{color:var(--g);font-style:italic;}
+.ps{font-size:14px;color:var(--muted);max-width:380px;margin:0 auto 20px;line-height:1.6;}
+.pstats{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:4px;}
+.pstat{text-align:center;background:rgba(255,255,255,.92);border-radius:12px;padding:12px 20px;border:1.5px solid rgba(45,122,69,.18);min-width:120px;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.pstat-n{font-family:'DM Serif Display',serif;font-size:24px;color:var(--g);}
+.pstat-l{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-top:3px;}
+.cg{display:grid;grid-template-columns:1fr 1fr;gap:18px;width:100%;animation:fu .6s .15s ease both;}
+.card{position:relative;background:var(--white);border-radius:18px;padding:28px 24px;cursor:pointer;border:1.5px solid rgba(0,0,0,.07);box-shadow:0 4px 18px rgba(0,0,0,.05);transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s;overflow:hidden;display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;}
+.card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .25s;border-radius:18px;}
+.card:hover{transform:translateY(-5px) scale(1.01);box-shadow:0 18px 40px rgba(0,0,0,.11);}
+.ca{position:absolute;top:0;left:0;right:0;height:4px;border-radius:18px 18px 0 0;}
+.ci{width:60px;height:60px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;}
+.cl{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;}
+.ct{font-family:'DM Serif Display',serif;font-size:18px;font-weight:400;margin-bottom:6px;}
+.cd{font-size:12px;color:var(--muted);line-height:1.55;}
+.carr{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:600;padding:8px 18px;border-radius:100px;margin-top:2px;transition:all .2s;}
+/* card themes */
+.c-mp .ca{background:linear-gradient(90deg,var(--g),#52b873);}
+.c-mp .ci{background:var(--gl);color:var(--g);}
+.c-mp .cl{color:var(--g);}
+.c-mp .carr{background:linear-gradient(135deg,var(--g),#4a9a62);color:#fff;box-shadow:0 4px 12px rgba(45,122,69,.3);}
+.c-pp .ca{background:linear-gradient(90deg,var(--o),#f5a060);}
+.c-pp .ci{background:var(--ol);color:var(--o);}
+.c-pp .cl{color:var(--o);}
+.c-pp .carr{background:linear-gradient(135deg,var(--o),#f5a060);color:#fff;box-shadow:0 4px 12px rgba(224,123,57,.3);}
+.c-gr .ca{background:linear-gradient(90deg,var(--go),#e8c048);}
+.c-gr .ci{background:var(--gol);color:var(--go);}
+.c-gr .cl{color:var(--go);}
+.c-gr .carr{background:linear-gradient(135deg,var(--go),#e8c048);color:#fff;box-shadow:0 4px 12px rgba(201,162,39,.3);}
+.c-vol .ca{background:linear-gradient(90deg,var(--v),#7b88f5);}
+.c-vol .ci{background:var(--vl);color:var(--v);}
+.c-vol .cl{color:var(--v);}
+.c-vol .carr{background:linear-gradient(135deg,var(--v),#7b88f5);color:#fff;box-shadow:0 4px 12px rgba(91,106,240,.3);}
+.c-qb .ca{background:linear-gradient(90deg,var(--qb),#4dc73a);}
+.c-qb .ci{background:var(--qbl);color:var(--qb);}
+.c-qb .cl{color:var(--qb);}
+.c-qb .carr{background:linear-gradient(135deg,var(--qb),#4dc73a);color:#fff;box-shadow:0 4px 12px rgba(44,160,28,.3);}
+.c-rpt{grid-column:1/-1;flex-direction:row;align-items:center;gap:18px;text-align:left;padding:18px 24px;}
+.c-rpt .ca{background:linear-gradient(90deg,var(--b),#2d5a8e);}
+.c-rpt .ci{background:var(--bl);color:var(--b);flex-shrink:0;width:50px;height:50px;font-size:22px;}
+.c-rpt .cl{color:var(--b);}
+.c-rpt .cb{flex:1;}
+.c-rpt .carr{background:linear-gradient(135deg,var(--b),#2d5a8e);color:#fff;box-shadow:0 4px 12px rgba(30,58,95,.3);flex-shrink:0;}
 
-.cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;width:100%;animation:fadeUp .6s .15s ease both;}
-.card{position:relative;background:var(--white);border-radius:20px;padding:32px 28px;text-decoration:none;color:inherit;border:1.5px solid rgba(0,0,0,0.06);box-shadow:0 4px 20px rgba(0,0,0,0.05);transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s ease,border-color .25s ease;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:18px;text-align:center;}
-.card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .25s ease;border-radius:20px;}
-.card:hover{transform:translateY(-6px) scale(1.01);box-shadow:0 20px 44px rgba(0,0,0,0.11);}
-.card-accent{position:absolute;top:0;left:0;right:0;height:4px;border-radius:20px 20px 0 0;}
-.card-icon{width:64px;height:64px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:28px;}
-.card-label{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;}
-.card-title{font-family:'DM Serif Display',serif;font-size:20px;font-weight:400;margin-bottom:8px;}
-.card-desc{font-size:13px;color:var(--text-muted);line-height:1.6;}
-.card-arrow{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;padding:9px 20px;border-radius:100px;margin-top:4px;transition:all .2s ease;}
-
-/* Card themes */
-.card-mp .card-accent{background:linear-gradient(90deg,#2d7a45,#52b873);}
-.card-mp .card-icon{background:#e8f5ed;color:#2d7a45;}
-.card-mp .card-label{color:#2d7a45;}
-.card-mp .card-arrow{background:linear-gradient(135deg,#2d7a45,#4a9a62);color:#fff;box-shadow:0 4px 12px rgba(45,122,69,0.3);}
-.card-pp .card-accent{background:linear-gradient(90deg,#e07b39,#f5a060);}
-.card-pp .card-icon{background:#fdf0e6;color:#e07b39;}
-.card-pp .card-label{color:#e07b39;}
-.card-pp .card-arrow{background:linear-gradient(135deg,#e07b39,#f5a060);color:#fff;box-shadow:0 4px 12px rgba(224,123,57,0.3);}
-.card-gr .card-accent{background:linear-gradient(90deg,#c9a227,#e8c048);}
-.card-gr .card-icon{background:#fdf8e6;color:#c9a227;}
-.card-gr .card-label{color:#c9a227;}
-.card-gr .card-arrow{background:linear-gradient(135deg,#c9a227,#e8c048);color:#fff;box-shadow:0 4px 12px rgba(201,162,39,0.3);}
-.card-vol .card-accent{background:linear-gradient(90deg,#5b6af0,#7b88f5);}
-.card-vol .card-icon{background:#eef0ff;color:#5b6af0;}
-.card-vol .card-label{color:#5b6af0;}
-.card-vol .card-arrow{background:linear-gradient(135deg,#5b6af0,#7b88f5);color:#fff;box-shadow:0 4px 12px rgba(91,106,240,0.3);}
-.card-rpt{grid-column:1/-1;flex-direction:row;align-items:center;gap:20px;text-align:left;padding:20px 28px;}
-.card-rpt .card-accent{background:linear-gradient(90deg,#1e3a5f,#2d5a8e);}
-.card-rpt .card-icon{background:#e6edf7;color:#1e3a5f;flex-shrink:0;width:52px;height:52px;font-size:24px;}
-.card-rpt .card-label{color:#1e3a5f;}
-.card-rpt .card-body{flex:1;}
-.card-rpt .card-arrow{background:linear-gradient(135deg,#1e3a5f,#2d5a8e);color:#fff;box-shadow:0 4px 12px rgba(30,58,95,0.3);flex-shrink:0;}
-
-/* APP SHELL */
+/* ---- APP ---- */
 #app{display:none;height:100vh;flex-direction:column;}
-.topbar{background:var(--white);border-bottom:1px solid var(--border);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
-.topbar-left{display:flex;align-items:center;gap:16px;}
-.topbar-logo{font-family:'DM Serif Display',serif;font-size:17px;color:var(--pantry-green);}
-.topbar-breadcrumb{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-muted);}
-.topbar-breadcrumb span{color:var(--text);font-weight:500;}
-.topbar-right{display:flex;align-items:center;gap:10px;}
-.back-btn{display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:8px;background:var(--pantry-light);color:var(--pantry-green);font-size:13px;font-weight:500;cursor:pointer;border:none;}
-.back-btn:hover{background:#d4eddb;}
+.top{background:var(--white);border-bottom:1px solid var(--bdr);padding:0 20px;height:52px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.tl{display:flex;align-items:center;gap:12px;}
+.tlogo{font-family:'DM Serif Display',serif;font-size:16px;color:var(--g);}
+.tbread{font-size:12px;color:var(--muted);}
+.tbread span{color:var(--txt);font-weight:500;}
+.back{display:flex;align-items:center;gap:5px;padding:5px 12px;border-radius:7px;background:var(--gl);color:var(--g);font-size:12px;font-weight:500;cursor:pointer;border:none;}
+.al{display:flex;flex:1;overflow:hidden;}
+.sb{width:200px;background:var(--white);border-right:1px solid var(--bdr);flex-shrink:0;overflow-y:auto;padding:12px 10px;}
+.sbh{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:10px 8px 5px;}
+.ni{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:7px;cursor:pointer;font-size:12px;color:var(--muted);transition:all .15s;margin-bottom:2px;}
+.ni:hover{background:var(--bg);color:var(--txt);}
+.ni.active{background:var(--gl);color:var(--g);font-weight:500;}
+.mc{flex:1;overflow-y:auto;padding:20px;}
 
-.app-layout{display:flex;flex:1;overflow:hidden;}
-.sidebar{width:220px;background:var(--white);border-right:1px solid var(--border);flex-shrink:0;overflow-y:auto;padding:16px 12px;}
-.sidebar-section{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);padding:12px 8px 6px;}
-.nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;color:var(--text-muted);transition:all .15s;margin-bottom:2px;}
-.nav-item:hover{background:var(--pantry-bg);color:var(--text);}
-.nav-item.active{background:var(--pantry-light);color:var(--pantry-green);font-weight:500;}
-.nav-item .icon{font-size:16px;}
-.main-content{flex:1;overflow-y:auto;padding:24px;}
-
-/* SECTION PANELS */
-.panel{display:none;}
-.panel.active{display:block;}
-
-/* STAT CARDS */
-.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
-.stat-card{background:var(--white);border-radius:12px;padding:16px 18px;border:1px solid var(--border);}
-.stat-label{font-size:12px;color:var(--text-muted);margin-bottom:4px;}
-.stat-value{font-size:22px;font-weight:600;color:var(--text);}
-.stat-change{font-size:12px;margin-top:4px;}
-.stat-up{color:#2d7a45;}
-.stat-down{color:#c0392b;}
-
-/* TABLE */
-.data-table{background:var(--white);border-radius:12px;border:1px solid var(--border);overflow:hidden;margin-bottom:20px;}
-.table-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);}
-.table-title{font-size:15px;font-weight:600;}
-.table-actions{display:flex;gap:8px;}
-.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--white);color:var(--text);transition:all .15s;}
-.btn:hover{background:var(--pantry-bg);}
-.btn-primary{background:var(--pantry-green);color:#fff;border-color:var(--pantry-green);}
-.btn-primary:hover{background:#246338;}
-.btn-orange{background:var(--pantry-orange);color:#fff;border-color:var(--pantry-orange);}
-.btn-orange:hover{background:#c06b2d;}
+/* ---- CONTENT COMPONENTS ---- */
+.sr{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.sc{background:var(--white);border-radius:10px;padding:14px 16px;border:1px solid var(--bdr);}
+.sl{font-size:11px;color:var(--muted);margin-bottom:3px;}
+.sv{font-size:20px;font-weight:700;color:var(--txt);}
+.sch{font-size:11px;margin-top:3px;}
+.sup{color:var(--g);}
+.sdn{color:#c0392b;}
+.sne{color:var(--muted);}
+.dt{background:var(--white);border-radius:10px;border:1px solid var(--bdr);overflow:hidden;margin-bottom:18px;}
+.dth{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--bdr);}
+.dtt{font-size:14px;font-weight:600;}
+.dta{display:flex;gap:7px;}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:6px 13px;border-radius:7px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--bdr);background:var(--white);color:var(--txt);transition:all .15s;font-family:inherit;}
+.btn:hover{background:var(--bg);}
+.btn-g{background:var(--g);color:#fff;border-color:var(--g);}
+.btn-g:hover{background:#246338;}
+.btn-o{background:var(--o);color:#fff;border-color:var(--o);}
+.btn-go{background:var(--go);color:#fff;border-color:var(--go);}
+.btn-b{background:var(--b);color:#fff;border-color:var(--b);}
+.btn-qb{background:var(--qb);color:#fff;border-color:var(--qb);}
 table{width:100%;border-collapse:collapse;}
-th{padding:10px 16px;text-align:left;font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;background:#fafbfa;border-bottom:1px solid var(--border);}
-td{padding:11px 16px;font-size:13px;border-bottom:1px solid #f0f4f1;}
+th{padding:9px 14px;text-align:left;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;background:#fafbfa;border-bottom:1px solid var(--bdr);}
+td{padding:10px 14px;font-size:12px;border-bottom:1px solid #f0f4f1;}
 tr:last-child td{border-bottom:none;}
 tr:hover td{background:#fafcfa;}
-.badge{display:inline-block;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:600;}
-.badge-green{background:#e8f5ed;color:#2d7a45;}
-.badge-orange{background:#fdf0e6;color:#e07b39;}
-.badge-blue{background:#eef0ff;color:#5b6af0;}
-.badge-gray{background:#f3f4f6;color:#6b7280;}
-.badge-gold{background:#fdf8e6;color:#c9a227;}
+.badge{display:inline-block;padding:2px 9px;border-radius:100px;font-size:10px;font-weight:600;}
+.bg{background:var(--gl);color:var(--g);}
+.bo{background:var(--ol);color:var(--o);}
+.bb{background:var(--bl);color:var(--b);}
+.bgo{background:var(--gol);color:var(--go);}
+.bgr{background:#f3f4f6;color:#6b7280;}
+.bqb{background:var(--qbl);color:var(--qb);}
+.brd{background:#fef2f2;color:#c0392b;}
+.uz{border:2px dashed var(--bdr);border-radius:10px;padding:36px;text-align:center;cursor:pointer;transition:all .2s;background:var(--white);margin-bottom:18px;}
+.uz:hover{border-color:var(--g);background:var(--gl);}
+.ui{font-size:32px;margin-bottom:10px;}
+.ut{font-size:14px;font-weight:600;margin-bottom:5px;}
+.us{font-size:12px;color:var(--muted);}
+.rc{background:var(--white);border-radius:10px;border:1px solid var(--bdr);padding:20px;margin-bottom:18px;}
+.rsh{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
+.mini-chart{display:flex;align-items:flex-end;gap:5px;height:70px;padding:6px 0;}
+.bw{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.bar{width:100%;background:var(--g);border-radius:3px 3px 0 0;opacity:.75;transition:opacity .2s;}
+.bw:hover .bar{opacity:1;}
+.bl2{font-size:9px;color:var(--muted);}
 
-/* UPLOAD AREA */
-.upload-zone{border:2px dashed var(--border);border-radius:12px;padding:40px;text-align:center;cursor:pointer;transition:all .2s;background:var(--white);margin-bottom:20px;}
-.upload-zone:hover,.upload-zone.drag{border-color:var(--pantry-green);background:var(--pantry-light);}
-.upload-icon{font-size:36px;margin-bottom:12px;color:var(--pantry-green);}
-.upload-title{font-size:15px;font-weight:600;margin-bottom:6px;}
-.upload-sub{font-size:13px;color:var(--text-muted);}
+/* ---- MODAL ---- */
+#ov{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:none;align-items:center;justify-content:center;}
+#ov.open{display:flex;}
+.mo{background:var(--white);border-radius:14px;padding:24px;max-width:500px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.2);}
+.mot{font-family:'DM Serif Display',serif;font-size:19px;margin-bottom:6px;}
+.mos{font-size:12px;color:var(--muted);margin-bottom:16px;}
+.mop{background:#f0f4f1;border-radius:100px;height:7px;margin:14px 0;}
+.mopb{background:var(--g);height:7px;border-radius:100px;transition:width .4s ease;}
+.mst{display:flex;flex-direction:column;gap:9px;margin:14px 0;}
+.msi{display:flex;align-items:center;gap:10px;font-size:12px;}
+.sc2{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;}
+.sd{background:var(--g);color:#fff;}
+.sa{background:var(--o);color:#fff;animation:pulse 1s infinite;}
+.sp{background:#f0f4f1;color:var(--muted);}
 
-/* PROGRESS / BOARD REPORT */
-.report-card{background:var(--white);border-radius:12px;border:1px solid var(--border);padding:24px;margin-bottom:20px;}
-.report-section{margin-bottom:20px;}
-.report-section:last-child{margin-bottom:0;}
-.report-section-title{font-size:13px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;}
-.kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
-.kpi{background:var(--pantry-bg);border-radius:8px;padding:14px;text-align:center;}
-.kpi-num{font-family:'DM Serif Display',serif;font-size:24px;color:var(--pantry-green);}
-.kpi-lbl{font-size:12px;color:var(--text-muted);margin-top:2px;}
+/* ---- TOAST ---- */
+#toast{position:fixed;bottom:20px;right:20px;background:#1a2e1f;color:#fff;padding:10px 18px;border-radius:9px;font-size:12px;z-index:300;display:none;align-items:center;gap:8px;box-shadow:0 8px 24px rgba(0,0,0,.2);}
+#toast.show{display:flex;animation:si .3s ease;}
 
-/* CHART BARS */
-.mini-chart{display:flex;align-items:flex-end;gap:6px;height:80px;padding:8px 0;}
-.bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;}
-.bar{width:100%;background:var(--pantry-green);border-radius:4px 4px 0 0;transition:height .3s ease;opacity:.8;}
-.bar-wrap:hover .bar{opacity:1;}
-.bar-label{font-size:10px;color:var(--text-muted);}
+/* ---- BOARD REPORT ---- */
+.brcover{background:linear-gradient(135deg,#1e3a5f,#2d5a8e);padding:40px;color:#fff;border-radius:14px 14px 0 0;}
+.brsec{margin-bottom:28px;}
+.brh{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--b);margin-bottom:14px;padding-bottom:7px;border-bottom:2px solid var(--b);}
 
-.card-qb .card-accent{background:linear-gradient(90deg,#2ca01c,#4dc73a);}
-.card-qb .card-icon{background:#edf9eb;color:#2ca01c;}
-.card-qb .card-label{color:#2ca01c;}
-.card-qb .card-arrow{background:linear-gradient(135deg,#2ca01c,#4dc73a);color:#fff;box-shadow:0 4px 12px rgba(44,160,28,0.3);}
-/* MAP STOPS */
-.stop-row{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--white);border-radius:8px;border:1px solid var(--border);margin-bottom:8px;}
-.stop-num{width:24px;height:24px;border-radius:50%;background:var(--pantry-green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;}
-.stop-info{flex:1;}
-.stop-name{font-size:13px;font-weight:500;}
-.stop-meta{font-size:12px;color:var(--text-muted);}
-.stop-count{font-size:14px;font-weight:600;color:var(--pantry-green);}
-
-/* MODAL OVERLAY */
-#modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:200;display:none;align-items:center;justify-content:center;}
-#modal-overlay.open{display:flex;}
-.modal{background:var(--white);border-radius:16px;padding:28px;max-width:520px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.2);}
-.modal-title{font-family:'DM Serif Display',serif;font-size:20px;margin-bottom:8px;}
-.modal-sub{font-size:13px;color:var(--text-muted);margin-bottom:20px;}
-.modal-progress{background:#f0f4f1;border-radius:100px;height:8px;margin:16px 0;}
-.modal-progress-bar{background:var(--pantry-green);height:8px;border-radius:100px;transition:width .5s ease;}
-.modal-steps{display:flex;flex-direction:column;gap:10px;margin:16px 0;}
-.modal-step{display:flex;align-items:center;gap:12px;font-size:13px;}
-.step-circle{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0;}
-.step-done{background:var(--pantry-green);color:#fff;}
-.step-active{background:var(--pantry-orange);color:#fff;animation:pulse 1s infinite;}
-.step-pending{background:#f0f4f1;color:var(--text-muted);}
-@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.6;}}
-
-/* TOAST */
-#toast{position:fixed;bottom:24px;right:24px;background:var(--text);color:#fff;padding:12px 20px;border-radius:10px;font-size:13px;z-index:300;display:none;align-items:center;gap:10px;box-shadow:0 8px 24px rgba(0,0,0,0.2);}
-#toast.show{display:flex;animation:slideIn .3s ease;}
-@keyframes slideIn{from{transform:translateY(20px);opacity:0;}to{transform:translateY(0);opacity:1;}}
-
-@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
-
-@media(max-width:640px){
-  .cards-grid{grid-template-columns:1fr;}
-  .stats-row{grid-template-columns:1fr 1fr;}
-  .sidebar{display:none;}
-  .kpi-row{grid-template-columns:1fr;}
-}
+@keyframes fu{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.5;}}
+@keyframes si{from{transform:translateY(16px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+@media(max-width:640px){.cg{grid-template-columns:1fr;}.sr{grid-template-columns:1fr 1fr;}.sb{display:none;}}
 </style>
 </head>
 <body>
 
-<!-- MODAL OVERLAY -->
-<div id="modal-overlay">
-  <div class="modal" id="modal-content"></div>
-</div>
-<!-- TOAST -->
-<div id="toast"><span id="toast-icon">✓</span><span id="toast-msg"></span></div>
+<div id="ov"><div class="mo" id="mc2"></div></div>
+<div id="toast"><span id="ti">✓</span><span id="tm"></span></div>
 
 <!-- PORTAL -->
 <div id="portal">
-  <div class="bg-circle bg1"></div>
-  <div class="bg-circle bg2"></div>
-  <div class="portal-wrapper">
-    <div class="portal-header">
-      <div class="portal-eyebrow">Davis County, Utah</div>
-      <h1 class="portal-title">Bountiful<br/><span>Food Pantry</span></h1>
-      <p class="portal-sub">Select a module below to manage operations, track data, and generate reports.</p>
-      <div class="portal-stats">
-        <div class="pstat"><div class="pstat-num">2.75M</div><div class="pstat-lbl">lbs tracked this year</div></div>
-        <div class="pstat"><div class="pstat-num">102K+</div><div class="pstat-lbl">households served</div></div>
-        <div class="pstat"><div class="pstat-num">44K</div><div class="pstat-lbl">volunteer hours</div></div>
+  <div class="bc bc1"></div><div class="bc bc2"></div>
+  <div class="pw">
+    <div class="ph">
+      <div class="pe">Davis County, Utah</div>
+      <h1 class="pt">Bountiful<br/><span>Food Pantry</span></h1>
+      <p class="ps">Select a module to manage operations, track data, and generate reports.</p>
+      <div class="pstats">
+        <div class="pstat"><div class="pstat-n">2.75M</div><div class="pstat-l">lbs tracked</div></div>
+        <div class="pstat"><div class="pstat-n">102K+</div><div class="pstat-l">households served</div></div>
+        <div class="pstat"><div class="pstat-n">44K hrs</div><div class="pstat-l">volunteer time</div></div>
+        <div class="pstat"><div class="pstat-n">$1.48M</div><div class="pstat-l">revenue FY2025</div></div>
       </div>
     </div>
-    <div class="cards-grid">
-      <!-- Mobile Pantry -->
-      <div class="card card-mp" onclick="openSection('mobile')">
-        <div class="card-accent"></div>
-        <div class="card-icon">🚌</div>
-        <div>
-          <div class="card-label">Route Tracking</div>
-          <div class="card-title">Mobile Pantry</div>
-          <div class="card-desc">Bus & truck routes, household counts, demographics, and stop-by-stop reporting.</div>
-        </div>
-        <div class="card-arrow">Open module →</div>
+    <div class="cg">
+      <div class="card c-mp" onclick="openSection('mobile')">
+        <div class="ca"></div><div class="ci">🚌</div>
+        <div><div class="cl">Route Tracking</div><div class="ct">Mobile Pantry</div><div class="cd">Bus & truck routes, household counts, demographics, stop-by-stop reporting.</div></div>
+        <div class="carr">Open module →</div>
       </div>
-      <!-- Pantry Pack -->
-      <div class="card card-pp" onclick="openSection('pantry')">
-        <div class="card-accent"></div>
-        <div class="card-icon">📦</div>
-        <div>
-          <div class="card-label">Assembly & Distribution</div>
-          <div class="card-title">Pantry Packs</div>
-          <div class="card-desc">Pack assembly events, inventory, and school distribution tracking.</div>
-        </div>
-        <div class="card-arrow">Open module →</div>
+      <div class="card c-pp" onclick="openSection('pantry')">
+        <div class="ca"></div><div class="ci">📦</div>
+        <div><div class="cl">Assembly & Distribution</div><div class="ct">Pantry Packs</div><div class="cd">Pack assembly events, inventory, and school distribution tracking.</div></div>
+        <div class="carr">Open module →</div>
       </div>
-      <!-- Grocery Rescue -->
-      <div class="card card-gr" onclick="openSection('grocery')">
-        <div class="card-accent"></div>
-        <div class="card-icon">🛒</div>
-        <div>
-          <div class="card-label">16 Store Partners</div>
-          <div class="card-title">Grocery Rescue</div>
-          <div class="card-desc">Daily pickups from Harmons, Smith's, Costco, Walmart, Target & more.</div>
-        </div>
-        <div class="card-arrow">Open module →</div>
+      <div class="card c-gr" onclick="openSection('grocery')">
+        <div class="ca"></div><div class="ci">🛒</div>
+        <div><div class="cl">16 Store Partners</div><div class="ct">Grocery Rescue</div><div class="cd">Daily pickups from Harmons, Smith's, Costco, Walmart, Target & more.</div></div>
+        <div class="carr">Open module →</div>
       </div>
-      <!-- Volunteers -->
-      <div class="card card-vol" onclick="openSection('volunteers')">
-        <div class="card-accent"></div>
-        <div class="card-icon">🤝</div>
-        <div>
-          <div class="card-label">People & Hours</div>
-          <div class="card-title">Volunteer Hub</div>
-          <div class="card-desc">Sign-ups, hour tracking, certifications, and volunteer recognition.</div>
-        </div>
-        <div class="card-arrow">Open module →</div>
+      <div class="card c-vol" onclick="openSection('volunteers')">
+        <div class="ca"></div><div class="ci">🤝</div>
+        <div><div class="cl">People & Hours</div><div class="ct">Volunteer Hub</div><div class="cd">Sign-ups, hour tracking, certifications, and volunteer recognition.</div></div>
+        <div class="carr">Open module →</div>
       </div>
-      <!-- QuickBooks -->
-      <div class="card card-qb" onclick="openSection('quickbooks')">
-        <div class="card-accent"></div>
-        <div class="card-icon">💼</div>
-        <div>
-          <div class="card-label">Financial Integration</div>
-          <div class="card-title">QuickBooks Sync</div>
-          <div class="card-desc">Connect donations, grants, and expenses directly to your QuickBooks account. Auto-reconcile.</div>
-        </div>
-        <div class="card-arrow">Open module →</div>
+      <div class="card c-qb" onclick="openSection('quickbooks')">
+        <div class="ca"></div><div class="ci">💼</div>
+        <div><div class="cl">Financial Integration</div><div class="ct">QuickBooks Sync</div><div class="cd">Donations, grants & expenses post directly to QuickBooks. Auto-reconcile.</div></div>
+        <div class="carr">Open module →</div>
       </div>
-      <!-- Reports -->
-      <div class="card card-rpt" onclick="openSection('reports')">
-        <div class="card-accent"></div>
-        <div class="card-icon">📊</div>
-        <div class="card-body">
-          <div class="card-label">Analytics & Board Prep</div>
-          <div class="card-title" style="font-family:'DM Serif Display',serif;font-size:18px;margin-bottom:4px;">Reports & Board Documents</div>
-          <div class="card-desc">One-click YoY reports, fiscal year summaries, and auto-generated board packets.</div>
+      <div class="card c-rpt" onclick="openSection('reports')">
+        <div class="ca"></div><div class="ci">📊</div>
+        <div class="cb">
+          <div class="cl">Analytics & Board Prep</div>
+          <div class="ct" style="font-family:'DM Serif Display',serif;font-size:17px;margin-bottom:4px;">Reports & Board Documents</div>
+          <div class="cd">One-click YoY reports, fiscal summaries, and auto-generated board packets.</div>
         </div>
-        <div class="card-arrow">Open module →</div>
+        <div class="carr">Open →</div>
       </div>
     </div>
-    <div style="margin-top:36px;font-size:12px;color:var(--text-muted);animation:fadeUp .6s .3s ease both;">
-      <strong style="color:var(--pantry-green);">Bountiful Food Pantry</strong> &nbsp;·&nbsp; No Replay USA NA Inc &nbsp;·&nbsp; Davis County Operations
+    <div style="margin-top:28px;font-size:11px;color:var(--muted);animation:fu .6s .3s ease both;">
+      <strong style="color:var(--g);">Bountiful Food Pantry</strong> · No Replay USA NA Inc · Davis County
     </div>
   </div>
 </div>
 
 <!-- APP SHELL -->
 <div id="app">
-  <div class="topbar">
-    <div class="topbar-left">
-      <div class="topbar-logo">🌿 Bountiful Food Pantry</div>
-      <div class="topbar-breadcrumb">/ <span id="breadcrumb-name">Module</span></div>
+  <div class="top">
+    <div class="tl">
+      <div class="tlogo">🌿 Bountiful Food Pantry</div>
+      <div class="tbread">/ <span id="bn">Module</span></div>
     </div>
-    <div class="topbar-right">
-      <button class="back-btn" onclick="goBack()">← Back to Portal</button>
-    </div>
+    <button class="back" onclick="goBack()">← Portal</button>
   </div>
-  <div class="app-layout">
-    <div class="sidebar">
-      <div class="sidebar-section">Navigation</div>
-      <div class="nav-item active" id="nav-overview" onclick="showTab('overview')"><span class="icon">📊</span>Overview</div>
-      <div class="nav-item" id="nav-data" onclick="showTab('data')"><span class="icon">📋</span>Data & Records</div>
-      <div class="nav-item" id="nav-upload" onclick="showTab('upload')"><span class="icon">⬆</span>Upload Data</div>
-      <div class="nav-item" id="nav-report" onclick="showTab('report')"><span class="icon">📄</span>Reports</div>
-      <div class="sidebar-section" style="margin-top:16px;">Quick Actions</div>
-      <div class="nav-item" onclick="showToast('✓','New entry saved successfully!')"><span class="icon">➕</span>New Entry</div>
-      <div class="nav-item" onclick="exportData()"><span class="icon">⬇</span>Export CSV</div>
+  <div class="al">
+    <div class="sb">
+      <div class="sbh">Navigation</div>
+      <div class="ni active" id="n-overview" onclick="showTab('overview')">📊 Overview</div>
+      <div class="ni" id="n-data" onclick="showTab('data')">📋 Data & Records</div>
+      <div class="ni" id="n-upload" onclick="showTab('upload')">⬆ Upload Data</div>
+      <div class="ni" id="n-report" onclick="showTab('report')">📄 Reports</div>
+      <div class="sbh" style="margin-top:14px;">Quick Actions</div>
+      <div class="ni" onclick="toast('✓','New entry saved!')">➕ New Entry</div>
+      <div class="ni" onclick="toast('⬇','CSV exported!')">⬇ Export CSV</div>
     </div>
-    <div class="main-content" id="main-content"></div>
+    <div class="mc" id="mc"></div>
   </div>
 </div>
 
 <script>
-let currentSection = '';
-let currentTab = 'overview';
-
-const SECTIONS = {
-  mobile: {
-    name: 'Mobile Pantry',
-    color: '#2d7a45',
-    overview: getMobileOverview,
-    data: getMobileData,
-    upload: getMobileUpload,
-    report: getMobileReport,
-  },
-  pantry: {
-    name: 'Pantry Packs',
-    color: '#e07b39',
-    overview: getPantryOverview,
-    data: getPantryData,
-    upload: getPantryUpload,
-    report: getPantryReport,
-  },
-  grocery: {
-    name: 'Grocery Rescue',
-    color: '#c9a227',
-    overview: getGroceryOverview,
-    data: getGroceryData,
-    upload: getGroceryUpload,
-    report: getGroceryReport,
-  },
-  volunteers: {
-    name: 'Volunteer Hub',
-    color: '#5b6af0',
-    overview: getVolunteerOverview,
-    data: getVolunteerData,
-    upload: getVolunteerUpload,
-    report: getVolunteerReport,
-  },
-  quickbooks: {
-    name: 'QuickBooks Sync',
-    color: '#2ca01c',
-    overview: getQBOverview,
-    data: getQBData,
-    upload: getQBUpload,
-    report: getQBReport,
-  },
-  reports: {
-    name: 'Reports & Board Docs',
-    color: '#1e3a5f',
-    overview: getReportsOverview,
-    data: getReportsData,
-    upload: getReportsUpload,
-    report: getReportsReport,
-  },
+var cur='', tab='overview';
+var S={
+  mobile:{name:'Mobile Pantry',ov:mobOv,data:mobData,upload:mobUp,report:mobRpt},
+  pantry:{name:'Pantry Packs',ov:ppOv,data:ppData,upload:ppUp,report:ppRpt},
+  grocery:{name:'Grocery Rescue',ov:grOv,data:grData,upload:grUp,report:grRpt},
+  volunteers:{name:'Volunteer Hub',ov:volOv,data:volData,upload:volUp,report:volRpt},
+  quickbooks:{name:'QuickBooks Sync',ov:qbOv,data:qbData,upload:qbUp,report:qbRpt},
+  reports:{name:'Reports & Board Docs',ov:rptOv,data:rptOv,upload:rptUp,report:rptOv}
 };
 
-function openSection(key) {
-  currentSection = key;
-  currentTab = 'overview';
-  document.getElementById('portal').style.display = 'none';
-  const app = document.getElementById('app');
-  app.style.display = 'flex';
-  document.getElementById('breadcrumb-name').textContent = SECTIONS[key].name;
-  renderContent();
-  setActiveNav('nav-overview');
+function openSection(k){
+  cur=k; tab='overview';
+  document.getElementById('portal').style.display='none';
+  var app=document.getElementById('app');
+  app.style.display='flex';
+  document.getElementById('bn').textContent=S[k].name;
+  render(); setNav('n-overview');
 }
-
-function goBack() {
-  document.getElementById('app').style.display = 'none';
-  document.getElementById('portal').style.display = 'flex';
+function goBack(){
+  document.getElementById('app').style.display='none';
+  document.getElementById('portal').style.display='flex';
 }
-
-function showTab(tab) {
-  currentTab = tab;
-  renderContent();
-  setActiveNav('nav-'+tab);
+function showTab(t){
+  tab=t; render(); setNav('n-'+t);
 }
-
-function setActiveNav(id) {
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  const el = document.getElementById(id);
-  if (el) el.classList.add('active');
+function setNav(id){
+  document.querySelectorAll('.ni').forEach(function(n){n.classList.remove('active');});
+  var el=document.getElementById(id);
+  if(el) el.classList.add('active');
 }
-
-function renderContent() {
-  const s = SECTIONS[currentSection];
-  const fn = s[currentTab];
-  document.getElementById('main-content').innerHTML = fn ? fn() : '<p>Coming soon.</p>';
+function render(){
+  var fn=S[cur][tab==='overview'?'ov':tab];
+  document.getElementById('mc').innerHTML=fn?fn():'<p>Coming soon.</p>';
 }
-
-function showToast(icon, msg, duration=3000) {
-  const t = document.getElementById('toast');
-  document.getElementById('toast-icon').textContent = icon;
-  document.getElementById('toast-msg').textContent = msg;
+function toast(icon,msg,ms){
+  ms=ms||3000;
+  var t=document.getElementById('toast');
+  document.getElementById('ti').textContent=icon;
+  document.getElementById('tm').textContent=msg;
   t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), duration);
+  setTimeout(function(){t.classList.remove('show');},ms);
+}
+function modal(html){
+  document.getElementById('mc2').innerHTML=html;
+  document.getElementById('ov').classList.add('open');
+}
+function closeModal(){document.getElementById('ov').classList.remove('open');}
+document.getElementById('ov').addEventListener('click',function(e){if(e.target===this)closeModal();});
+
+function uploadAnim(title){
+  modal('<div class="mot">'+title+'</div><div class="mos">Processing your file...</div>'+
+    '<div class="mop"><div class="mopb" id="pb" style="width:0%"></div></div>'+
+    '<div class="mst" id="mst">'+
+    '<div class="msi"><div class="sc2 sa" id="ss1">1</div><span>Validating file format</span></div>'+
+    '<div class="msi"><div class="sc2 sp" id="ss2">2</div><span>Matching to profiles</span></div>'+
+    '<div class="msi"><div class="sc2 sp" id="ss3">3</div><span>Importing records</span></div>'+
+    '<div class="msi"><div class="sc2 sp" id="ss4">4</div><span>Updating dashboard</span></div>'+
+    '</div><div id="md" style="display:none;text-align:center;padding:10px 0;">'+
+    '<div style="font-size:28px;margin-bottom:6px;">✅</div>'+
+    '<div style="font-size:14px;font-weight:600;margin-bottom:4px;">Upload complete!</div>'+
+    '<div style="font-size:12px;color:var(--muted);margin-bottom:14px;">All records imported successfully.</div>'+
+    '<button class="btn btn-g" onclick="closeModal()">Done</button></div>');
+  runSteps(['pb'],['10%','40%','75%','100%'],['ss1','ss2','ss3','ss4'],700);
 }
 
-function exportData() {
-  showToast('⬇', 'CSV exported to your downloads folder!');
-}
-
-function showModal(html) {
-  document.getElementById('modal-content').innerHTML = html;
-  document.getElementById('modal-overlay').classList.add('open');
-}
-
-function closeModal() {
-  document.getElementById('modal-overlay').classList.remove('open');
-}
-
-document.getElementById('modal-overlay').addEventListener('click', function(e) {
-  if (e.target === this) closeModal();
-});
-
-/* ===== MOBILE PANTRY ===== */
-function getMobileOverview() {
-  return `
-<div style="margin-bottom:20px;"><h2 style="font-family:'DM Serif Display',serif;font-size:24px;margin-bottom:4px;">Mobile Pantry</h2>
-<p style="font-size:13px;color:var(--text-muted);">FY2025 · Bus & Truck Routes · Davis County</p></div>
-<div class="stats-row">
-  <div class="stat-card"><div class="stat-label">Households Served</div><div class="stat-value">8,342</div><div class="stat-change stat-up">↑ 14% vs last year</div></div>
-  <div class="stat-card"><div class="stat-label">Total Individuals</div><div class="stat-value">23,618</div><div class="stat-change stat-up">↑ 11% vs last year</div></div>
-  <div class="stat-card"><div class="stat-label">Active Routes</div><div class="stat-value">18</div><div class="stat-change stat-up">+3 new stops this year</div></div>
-  <div class="stat-card"><div class="stat-label">Seniors 55+</div><div class="stat-value">41%</div><div class="stat-change" style="color:var(--text-muted);">of households served</div></div>
-</div>
-<div class="data-table">
-  <div class="table-header"><div class="table-title">Recent Route Stops</div>
-  <div class="table-actions"><button class="btn btn-primary" onclick="showTab('upload')">+ Log Stop</button></div></div>
-  <table>
-    <tr><th>Date</th><th>Route</th><th>Location</th><th>Households</th><th>Individuals</th><th>Seniors</th><th>New Clients</th><th>Status</th></tr>
-    <tr><td>May 9</td><td>Bus Route A</td><td>Bountiful Rec Center</td><td>84</td><td>231</td><td>38</td><td>7</td><td><span class="badge badge-green">Complete</span></td></tr>
-    <tr><td>May 9</td><td>Truck Route 2</td><td>Woods Cross City Hall</td><td>62</td><td>178</td><td>29</td><td>4</td><td><span class="badge badge-green">Complete</span></td></tr>
-    <tr><td>May 7</td><td>Bus Route B</td><td>North Salt Lake Park</td><td>71</td><td>203</td><td>31</td><td>6</td><td><span class="badge badge-green">Complete</span></td></tr>
-    <tr><td>May 7</td><td>Truck Route 1</td><td>Centerville Sr Center</td><td>48</td><td>119</td><td>44</td><td>2</td><td><span class="badge badge-green">Complete</span></td></tr>
-    <tr><td>May 14</td><td>Bus Route A</td><td>Bountiful Rec Center</td><td>—</td><td>—</td><td>—</td><td>—</td><td><span class="badge badge-blue">Scheduled</span></td></tr>
-  </table>
-</div>
-<div class="data-table">
-  <div class="table-header"><div class="table-title">Monthly Households Served</div></div>
-  <div style="padding:16px 20px;">
-    <div class="mini-chart">
-      ${[520,580,612,695,670,710,740,780,760,810,840,880].map((v,i)=>{
-        const months=['J','F','M','A','M','J','J','A','S','O','N','D'];
-        return `<div class="bar-wrap"><div class="bar" style="height:${Math.round(v/900*70)+10}px;"></div><div class="bar-label">${months[i]}</div></div>`;
-      }).join('')}
-    </div>
-  </div>
-</div>`;
-}
-
-function getMobileData() {
-  return `
-<div style="margin-bottom:20px;"><h2 style="font-family:'DM Serif Display',serif;font-size:22px;">All Route Stops · FY2025</h2></div>
-<div class="data-table">
-  <div class="table-header"><div class="table-title">Stop Records</div>
-  <div class="table-actions">
-    <button class="btn" onclick="exportData()">⬇ Export</button>
-    <button class="btn btn-primary" onclick="showTab('upload')">+ Add Stop</button>
-  </div></div>
-  <table>
-    <tr><th>Date</th><th>Route</th><th>Location</th><th>ZIP</th><th>Households</th><th>Indiv.</th><th>Vouchers</th><th>Seniors</th><th>New</th></tr>
-    ${[
-      ['May 9','Bus A','Bountiful Rec Center','84010','84','231','12','38','7'],
-      ['May 9','Truck 2','Woods Cross City Hall','84087','62','178','8','29','4'],
-      ['May 7','Bus B','North Salt Lake Park','84054','71','203','9','31','6'],
-      ['May 7','Truck 1','Centerville Sr Center','84014','48','119','5','44','2'],
-      ['May 2','Bus A','Bountiful Rec Center','84010','79','218','11','35','5'],
-      ['May 2','Truck 2','Farmington City Hall','84025','55','161','7','24','3'],
-      ['Apr 25','Bus B','North Salt Lake Park','84054','68','196','10','28','8'],
-      ['Apr 25','Truck 1','Kaysville Comm Ctr','84037','52','138','6','41','2'],
-    ].map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td><td>${r[6]}</td><td>${r[7]}</td><td>${r[8]}</td></tr>`).join('')}
-  </table>
-</div>`;
-}
-
-function getMobileUpload() {
-  return `
-<div style="margin-bottom:20px;"><h2 style="font-family:'DM Serif Display',serif;font-size:22px;">Upload Route Data</h2>
-<p style="font-size:13px;color:var(--text-muted);">Log a new stop or import a batch of route records.</p></div>
-<div class="upload-zone" onclick="simulateUpload('mobile')">
-  <div class="upload-icon">📁</div>
-  <div class="upload-title">Drop your route log here or click to browse</div>
-  <div class="upload-sub">Accepts .xlsx, .csv — matches your current PantrySoft export format</div>
-</div>
-<div class="report-card">
-  <div class="report-section-title">Or enter a stop manually</div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
-    ${['Date','Route','Location','ZIP Code','Households','Individuals','Vouchers','Seniors 55+','New Clients','Notes'].map(f=>`
-    <div><label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:4px;">${f}</label>
-    <input type="${f==='Date'?'date':'text'}" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;" placeholder="${f}"/></div>`).join('')}
-  </div>
-  <button class="btn btn-primary" onclick="saveEntry('mobile')">Save Stop Record</button>
-</div>`;
-}
-
-function getMobileReport() {
-  return getGenericReport('Mobile Pantry', 'route stops', '18 active stops · Bus & Truck routes');
-}
-
-/* ===== PANTRY PACKS ===== */
-function getPantryOverview() {
-  return `
-<div style="margin-bottom:20px;"><h2 style="font-family:'DM Serif Display',serif;font-size:24px;margin-bottom:4px;">Pantry Packs</h2>
-<p style="font-size:13px;color:var(--text-muted);">FY2025 · Assembly Events & School Distribution</p></div>
-<div class="stats-row">
-  <div class="stat-card"><div class="stat-label">Packs Assembled</div><div class="stat-value">14,820</div><div class="stat-change stat-up">↑ 18% vs last year</div></div>
-  <div class="stat-card"><div class="stat-label">Schools Served</div><div class="stat-value">23</div><div class="stat-change stat-up">+2 new schools</div></div>
-  <div class="stat-card"><div class="stat-label">Volunteer Events</div><div class="stat-value">48</div><div class="stat-change" style="color:var(--text-muted);">assembly sessions</div></div>
-  <div class="stat-card"><div class="stat-label">Lbs Distributed</div><div class="stat-value">44,460</div><div class="stat-change stat-up">↑ 16% vs last year</div></div>
-</div>
-<div class="data-table">
-  <div class="table-header"><div class="table-title">Recent Assembly Events</div>
-  <div class="table-actions"><button class="btn btn-orange" onclick="showTab('upload')">+ Log Event</button></div></div>
-  <table>
-    <tr><th>Date</th><th>Location</th><th>Volunteers</th><th>Packs</th><th>Lbs</th><th>School Delivery</th><th>Status</th></tr>
-    <tr><td>May 8</td><td>Main Warehouse</td><td>32</td><td>480</td><td>1,440</td><td>Davis High School</td><td><span class="badge badge-green">Complete</span></td></tr>
-    <tr><td>May 6</td><td>Community Room A</td><td>18</td><td>260</td><td>780</td><td>Mueller Park Jr High</td><td><span class="badge badge-green">Complete</span></td></tr>
-    <tr><td>May 3</td><td>Main Warehouse</td><td>41</td><td>610</td><td>1,830</td><td>Valley View Elementary</td><td><span class="badge badge-green">Complete</span></td></tr>
-    <tr><td>May 15</td><td>Main Warehouse</td><td>—</td><td>—</td><td>—</td><td>TBD</td><td><span class="badge badge-blue">Scheduled</span></td></tr>
-  </table>
-</div>
-<div class="report-card">
-  <div class="report-section-title">Inventory Status</div>
-  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">
-    ${[['Peanut Butter','2,840 jars','🟢 Good'],['Canned Beans','1,920 cans','🟡 Low'],['Pasta','3,100 lbs','🟢 Good'],['Cereal','890 boxes','🔴 Reorder']].map(([n,q,s])=>`
-    <div style="background:var(--pantry-bg);border-radius:8px;padding:12px;text-align:center;">
-      <div style="font-size:13px;font-weight:600;">${n}</div>
-      <div style="font-size:16px;font-weight:700;color:var(--pantry-green);margin:4px 0;">${q}</div>
-      <div style="font-size:12px;">${s}</div>
-    </div>`).join('')}
-  </div>
-</div>`;
-}
-
-function getPantryData() {
-  return `
-<div style="margin-bottom:20px;"><h2 style="font-family:'DM Serif Display',serif;font-size:22px;">Assembly Event Records</h2></div>
-<div class="data-table">
-  <div class="table-header"><div class="table-title">All Events · FY2025</div>
-  <div class="table-actions"><button class="btn" onclick="exportData()">⬇ Export</button><button class="btn btn-orange" onclick="showTab('upload')">+ Add</button></div></div>
-  <table>
-    <tr><th>Date</th><th>Location</th><th>Volunteers</th><th>Packs</th><th>Lbs</th><th>Schools</th><th>Delivered</th></tr>
-    ${[
-      ['May 8','Main Warehouse','32','480','1,440','Davis High','Yes'],
-      ['May 6','Community Room A','18','260','780','Mueller Park Jr High','Yes'],
-      ['May 3','Main Warehouse','41','610','1,830','Valley View Elem','Yes'],
-      ['Apr 29','Main Warehouse','28','420','1,260','Bountiful High','Yes'],
-      ['Apr 26','Community Room A','22','330','990','Millcreek Jr High','Yes'],
-      ['Apr 22','Main Warehouse','39','580','1,740','South Davis Jr High','Yes'],
-    ].map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}
-  </table>
-</div>`;
-}
-
-function getPantryUpload() {
-  return `
-<div style="margin-bottom:20px;"><h2 style="font-family:'DM Serif Display',serif;font-size:22px;">Upload Pack Event Data</h2></div>
-<div class="upload-zone" onclick="simulateUpload('pantry')">
-  <div class="upload-icon">📁</div>
-  <div class="upload-title">Drop your event log here or click to browse</div>
-  <div class="upload-sub">Accepts .xlsx, .csv</div>
-</div>
-<div class="report-card">
-  <div class="report-section-title">Log an assembly event manually</div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
-    ${['Date','Location','Volunteers','Packs Assembled','Weight (lbs)','Schools Delivered','Notes'].map(f=>`
-    <div><label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:4px;">${f}</label>
-    <input type="${f==='Date'?'date':'text'}" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;" placeholder="${f}"/></div>`).join('')}
-  </div>
-  <button class="btn btn-orange" onclick="saveEntry('pantry')">Save Event</button>
-</div>`;
-}
-
-function getPantryReport() {
-  return getGenericReport('Pantry Packs', 'assembly events', '48 events · 23 schools served');
-}
-
-/* ===== GROCERY RESCUE ===== */
-function getGroceryOverview() {
-  return `
-<div style="margin-bottom:20px;"><h2 style="font-family:'DM Serif Display',serif;font-size:24px;margin-bottom:4px;">Grocery Rescue</h2>
-<p style="font-size:13px;color:var(--text-muted);">FY2025 · 16 Store Partners · 43% of Total Incoming Food</p></div>
-<div class="stats-row">
-  <div class="stat-card"><div class="stat-label">Total Rescued (lbs)</div><div class="stat-value">1.18M</div><div class="stat-change stat-up">↑ 22% vs last year</div></div>
-  <div class="stat-card"><div class="stat-label">Store Partners</div><div class="stat-value">16</div><div class="stat-change stat-up">+2 this year</div></div>
-  <div class="stat-card"><div class="stat-label">Weekly Pickups</div><div class="stat-value">84</div><div class="stat-change" style="color:var(--text-muted);">across all partners</div></div>
-  <div class="stat-card"><div class="stat-label">Avg per Pickup</div><div class="stat-value">268 lbs</div><div class="stat-change stat-up">↑ 8% efficiency</div></div>
-</div>
-<div class="data-table">
-  <div class="table-header"><div class="table-title">Recent Pickups</div>
-  <div class="table-actions"><button class="btn" style="background:var(--pantry-gold);color:#fff;border-color:var(--pantry-gold);" onclick="showTab('upload')">+ Log Pickup</button></div></div>
-  <table>
-    <tr><th>Date</th><th>Store</th><th>Location</th><th>Produce (lbs)</th><th>Bakery (lbs)</th><th>Dairy (lbs)</th><th>Total (lbs)</th><th>Driver</th></tr>
-    <tr><td>May 10</td><td>Harmons</td><td>Bountiful</td><td>142</td><td>88</td><td>34</td><td>264</td><td>Mike S.</td></tr>
-    <tr><td>May 10</td><td>Smith's #1</td><td>Centerville</td><td>198</td><td>115</td><td>52</td><td>365</td><td>Rachel T.</td></tr>
-    <tr><td>May 10</td><td>Costco</td><td>Bountiful</td><td>320</td><td>0</td><td>180</td><td>500</td><td>Jim P.</td></tr>
-    <tr><td>May 9</td><td>Walmart #2</td><td>N. Salt Lake</td><td>175</td><td>94</td><td>48</td><td>317</td><td>Sara M.</td></tr>
-    <tr><td>May 9</td><td>Target</td><td>Bountiful</td><td>89</td><td>62</td><td>0</td><td>151</td><td>Mike S.</td></tr>
-    <tr><td>May 8</td><td>Natural Grocers</td><td>Bountiful</td><td>210</td><td>76</td><td>28</td><td>314</td><td>Rachel T.</td></tr>
-  </table>
-</div>
-<div class="data-table">
-  <div class="table-header"><div class="table-title">Top Partners by Volume · FY2025</div></div>
-  <table>
-    <tr><th>Store</th><th>Total Pickups</th><th>Total lbs</th><th>Avg/Pickup</th><th>Share</th></tr>
-    ${[
-      ['Costco','312','156,000','500','13.2%'],
-      ['Smith\'s (4 locations)','624','218,400','350','18.5%'],
-      ['Walmart (3 locations)','468','140,400','300','11.9%'],
-      ['Harmons','312','93,600','300','7.9%'],
-      ['Dick\'s Market (2 loc)','208','52,000','250','4.4%'],
-      ['WinCo','156','54,600','350','4.6%'],
-      ['Natural Grocers','156','39,000','250','3.3%'],
-      ['Sprouts','156','42,900','275','3.6%'],
-    ].map(r=>`<tr><td><strong>${r[0]}</strong></td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td><span class="badge badge-gold">${r[4]}</span></td></tr>`).join('')}
-  </table>
-</div>`;
-}
-
-function getGroceryData() {
-  return `
-<div style="margin-bottom:20px;"><h2 style="font-family:'DM Serif Display',serif;font-size:22px;">All Grocery Rescue Pickups</h2></div>
-<div class="data-table">
-  <div class="table-header"><div class="table-title">Pickup Log · FY2025</div>
-  <div class="table-actions"><button class="btn" onclick="exportData()">⬇ Export</button></div></div>
-  <table>
-    <tr><th>Date</th><th>Store</th><th>Produce</th><th>Bakery</th><th>Dairy</th><th>Meat</th><th>Dry</th><th>Total lbs</th><th>Receipt #</th></tr>
-    ${[
-      ['May 10','Harmons Bountiful','142','88','34','0','0','264','HR-2405-001'],
-      ['May 10','Smith\'s Centerville','198','115','52','0','0','365','SM-2405-001'],
-      ['May 10','Costco Bountiful','320','0','180','0','0','500','CO-2405-001'],
-      ['May 9','Walmart N SL','175','94','48','0','0','317','WM-2405-001'],
-      ['May 9','Target Bountiful','89','62','0','0','0','151','TG-2405-001'],
-      ['May 8','Natural Grocers','210','76','28','0','0','314','NG-2405-001'],
-    ].map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}
-  </table>
-</div>`;
-}
-
-function getGroceryUpload() {
-  return `
-<div style="margin-bottom:20px;"><h2 style="font-family:'DM Serif Display',serif;font-size:22px;">Upload Grocery Rescue Data</h2></div>
-<div class="upload-zone" onclick="simulateUpload('grocery')">
-  <div class="upload-icon">🛒</div>
-  <div class="upload-title">Drop receipt or pickup log here</div>
-  <div class="upload-sub">Photo of store receipt, .xlsx, or .csv — auto-matches to store partner profiles</div>
-</div>
-<div class="report-card">
-  <div class="report-section-title">Log a pickup manually</div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
-    ${['Date','Store Partner','Produce (lbs)','Bakery (lbs)','Dairy (lbs)','Meat (lbs)','Dry Goods (lbs)','Driver','Receipt Number','Notes'].map(f=>`
-    <div><label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:4px;">${f}</label>
-    <input type="${f==='Date'?'date':'text'}" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;" placeholder="${f}"/></div>`).join('')}
-  </div>
-  <button class="btn" style="background:var(--pantry-gold);color:#fff;border-color:var(--pantry-gold);" onclick="saveEntry('grocery')">Save Pickup</button>
-</div>`;
-}
-
-function getGroceryReport() {
-  return getGenericReport('Grocery Rescue', 'store pickups', '16 partners · 84 weekly pickups');
-}
-
-/* ===== VOLUNTEERS ===== */
-function getVolunteerOverview() {
-  return `
-<div style="margin-bottom:20px;"><h2 style="font-family:'DM Serif Display',serif;font-size:24px;margin-bottom:4px;">Volunteer Hub</h2>
-<p style="font-size:13px;color:var(--text-muted);">FY2025 · 44,026 Total Hours Logged</p></div>
-<div class="stats-row">
-  <div class="stat-card"><div class="stat-label">Total Hours</div><div class="stat-value">44,026</div><div class="stat-change stat-up">↑ 12% vs last year</div></div>
-  <div class="stat-card"><div class="stat-label">Active Volunteers</div><div class="stat-value">312</div><div class="stat-change stat-up">+28 new this year</div></div>
-  <div class="stat-card"><div class="stat-label">Dollar Equivalent</div><div class="stat-value">$1.12M</div><div class="stat-change" style="color:var(--text-muted);">at $25.50/hr rate</div></div>
-  <div class="stat-card"><div class="stat-label">Avg Hours/Vol</div><div class="stat-value">141</div><div class="stat-change stat-up">↑ 8% engagement</div></div>
-</div>
-<div class="data-table">
-  <div class="table-header"><div class="table-title">Top Volunteers · FY2025</div>
-  <div class="table-actions"><button class="btn" style="background:#5b6af0;color:#fff;border-color:#5b6af0;" onclick="showTab('upload')">+ Log Hours</button></div></div>
-  <table>
-    <tr><th>Name</th><th>Role</th><th>Hours YTD</th><th>Events</th><th>Since</th><th>Status</th></tr>
-    <tr><td><strong>Dorothy M.</strong></td><td>Route Driver</td><td>342</td><td>86</td><td>2018</td><td><span class="badge badge-green">Active</span></td></tr>
-    <tr><td><strong>Harold K.</strong></td><td>Warehouse Lead</td><td>318</td><td>79</td><td>2019</td><td><span class="badge badge-green">Active</span></td></tr>
-    <tr><td><strong>Margaret L.</strong></td><td>Pack Assembly</td><td>297</td><td>74</td><td>2020</td><td><span class="badge badge-green">Active</span></td></tr>
-    <tr><td><strong>Bob & June T.</strong></td><td>Sort & Pack</td><td>281</td><td>70</td><td>2017</td><td><span class="badge badge-green">Active</span></td></tr>
-    <tr><td><strong>Church Group A</strong></td><td>Group Events</td><td>1,240</td><td>12</td><td>2021</td><td><span class="badge badge-blue">Group</span></td></tr>
-    <tr><td><strong>LDS Ward #14</strong></td><td>Assembly Days</td><td>980</td><td>9</td><td>2022</td><td><span class="badge badge-blue">Group</span></td></tr>
-  </table>
-</div>`;
-}
-
-function getVolunteerData() {
-  return `
-<div style="margin-bottom:20px;"><h2 style="font-family:'DM Serif Display',serif;font-size:22px;">Volunteer Hour Log</h2></div>
-<div class="data-table">
-  <div class="table-header"><div class="table-title">Recent Hours</div>
-  <div class="table-actions"><button class="btn" onclick="exportData()">⬇ Export</button></div></div>
-  <table>
-    <tr><th>Date</th><th>Volunteer</th><th>Activity</th><th>Hours</th><th>Verified</th></tr>
-    ${[
-      ['May 10','Dorothy M.','Mobile Pantry Route','4.0','Yes'],
-      ['May 10','Harold K.','Warehouse Intake','6.0','Yes'],
-      ['May 10','Margaret L.','Pack Assembly','3.5','Yes'],
-      ['May 9','Bob T.','Sort & Distribution','5.0','Yes'],
-      ['May 9','June T.','Sort & Distribution','5.0','Yes'],
-      ['May 8','Church Group A','Assembly Event','84.0','Yes'],
-      ['May 7','Dorothy M.','Mobile Pantry Route','4.0','Yes'],
-    ].map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}
-  </table>
-</div>`;
-}
-
-function getVolunteerUpload() {
-  return `
-<div style="margin-bottom:20px;"><h2 style="font-family:'DM Serif Display',serif;font-size:22px;">Log Volunteer Hours</h2></div>
-<div class="upload-zone" onclick="simulateUpload('volunteers')">
-  <div class="upload-icon">🤝</div>
-  <div class="upload-title">Import sign-in sheet or hour log</div>
-  <div class="upload-sub">.xlsx, .csv — or sync directly from your volunteer tracking system</div>
-</div>
-<div class="report-card">
-  <div class="report-section-title">Log hours manually</div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
-    ${['Date','Volunteer Name','Activity / Program','Hours','Notes'].map(f=>`
-    <div><label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:4px;">${f}</label>
-    <input type="${f==='Date'?'date':'text'}" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;" placeholder="${f}"/></div>`).join('')}
-  </div>
-  <button class="btn" style="background:#5b6af0;color:#fff;border-color:#5b6af0;" onclick="saveEntry('volunteers')">Save Hours</button>
-</div>`;
-}
-
-function getVolunteerReport() {
-  return getGenericReport('Volunteers', 'volunteer hours', '312 active volunteers · 44,026 hours');
-}
-
-/* ===== REPORTS ===== */
-function getReportsOverview() {
-  return `
-<div style="margin-bottom:20px;"><h2 style="font-family:'DM Serif Display',serif;font-size:24px;margin-bottom:4px;">Reports & Board Documents</h2>
-<p style="font-size:13px;color:var(--text-muted);">FY2025 · Fiscal Year July 1 – June 30</p></div>
-
-<div class="report-card" style="background:linear-gradient(135deg,#1e3a5f,#2d5a8e);color:#fff;border:none;">
-  <div style="display:flex;align-items:center;justify-content:space-between;">
-    <div>
-      <div style="font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;opacity:.7;margin-bottom:8px;">One-Click Generation</div>
-      <div style="font-family:'DM Serif Display',serif;font-size:22px;margin-bottom:6px;">Generate Board Report Packet</div>
-      <div style="font-size:13px;opacity:.8;">Pulls all current-year data, generates YoY comparisons, and formats a ready-to-present PDF board packet.</div>
-    </div>
-    <button onclick="generateBoardReport()" style="background:#fff;color:#1e3a5f;border:none;padding:14px 24px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap;margin-left:24px;flex-shrink:0;">
-      🗒️ Generate Now
-    </button>
-  </div>
-</div>
-
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
-  <div class="data-table">
-    <div class="table-header"><div class="table-title">Recent Reports</div></div>
-    <table>
-      <tr><th>Report</th><th>Generated</th><th>Action</th></tr>
-      <tr><td>Q3 FY2025 Summary</td><td>Apr 30</td><td><button class="btn" onclick="showToast('⬇','Downloading Q3 FY2025 Report...')">Download</button></td></tr>
-      <tr><td>Feb 2025 Board Packet</td><td>Feb 28</td><td><button class="btn" onclick="showToast('⬇','Downloading Feb Board Packet...')">Download</button></td></tr>
-      <tr><td>Annual Report FY2024</td><td>Jul 15, 2024</td><td><button class="btn" onclick="showToast('⬇','Downloading Annual Report...')">Download</button></td></tr>
-      <tr><td>Grocery Rescue YoY</td><td>Mar 12</td><td><button class="btn" onclick="showToast('⬇','Downloading Grocery Rescue Report...')">Download</button></td></tr>
-    </table>
-  </div>
-  <div class="data-table">
-    <div class="table-header"><div class="table-title">Scheduled Reports</div></div>
-    <table>
-      <tr><th>Report</th><th>Frequency</th><th>Next Run</th></tr>
-      <tr><td>Monthly KPI Summary</td><td>Monthly</td><td><span class="badge badge-green">Jun 1</span></td></tr>
-      <tr><td>Board Packet</td><td>Quarterly</td><td><span class="badge badge-blue">Jul 1</span></td></tr>
-      <tr><td>Volunteer Hours</td><td>Weekly</td><td><span class="badge badge-green">May 17</span></td></tr>
-      <tr><td>Annual Report</td><td>Yearly</td><td><span class="badge badge-gray">Jul 2025</span></td></tr>
-    </table>
-  </div>
-</div>
-
-<div class="report-card">
-  <div class="report-section-title">Year-Over-Year Key Metrics</div>
-  <table style="width:100%;border-collapse:collapse;font-size:13px;">
-    <tr style="background:#fafbfa;"><th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;">Metric</th><th style="padding:10px 14px;text-align:right;font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;">FY2024</th><th style="padding:10px 14px;text-align:right;font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;">FY2025</th><th style="padding:10px 14px;text-align:right;font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;">Change</th></tr>
-    ${[
-      ['Total lbs Tracked','2,120,000','2,750,000','+30%','stat-up'],
-      ['Households Served','93,962','102,209','+9%','stat-up'],
-      ['Revenue','$1,014,510','$1,479,082','+46%','stat-up'],
-      ['Volunteer Hours','39,312','44,026','+12%','stat-up'],
-      ['Grocery Rescue lbs','968,000','1,182,500','+22%','stat-up'],
-      ['Mobile Pantry HH','7,318','8,342','+14%','stat-up'],
-    ].map(([m,y24,y25,ch,cls])=>`
-    <tr style="border-bottom:1px solid #f0f4f1;">
-      <td style="padding:11px 14px;font-weight:500;">${m}</td>
-      <td style="padding:11px 14px;text-align:right;color:var(--text-muted);">${y24}</td>
-      <td style="padding:11px 14px;text-align:right;font-weight:600;">${y25}</td>
-      <td style="padding:11px 14px;text-align:right;" class="${cls}">${ch}</td>
-    </tr>`).join('')}
-  </table>
-</div>`;
-}
-
-function getReportsData() { return getReportsOverview(); }
-function getReportsUpload() {
-  return `
-<div style="margin-bottom:20px;"><h2 style="font-family:'DM Serif Display',serif;font-size:22px;">Import Source Data</h2>
-<p style="font-size:13px;color:var(--text-muted);">Upload PantrySoft exports, QuickBooks reports, or spreadsheet backups.</p></div>
-<div class="upload-zone" onclick="simulateUpload('reports')">
-  <div class="upload-icon">📊</div>
-  <div class="upload-title">Drop any data file here</div>
-  <div class="upload-sub">Accepts PantrySoft exports, QuickBooks .iif/.csv, Excel workbooks</div>
-</div>`;
-}
-function getReportsReport() { return getReportsOverview(); }
-
-/* ===== SHARED HELPERS ===== */
-function getGenericReport(name, dataType, summary) {
-  return `
-<div style="margin-bottom:20px;"><h2 style="font-family:'DM Serif Display',serif;font-size:22px;">${name} · Reports</h2>
-<p style="font-size:13px;color:var(--text-muted);">${summary}</p></div>
-<div class="report-card">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
-    <div>
-      <div style="font-size:15px;font-weight:600;margin-bottom:4px;">Generate ${name} Report</div>
-      <div style="font-size:13px;color:var(--text-muted);">Pulls all ${dataType} data, formats YoY comparison, ready to include in board packet.</div>
-    </div>
-    <button class="btn btn-primary" onclick="generateModuleReport('${name}')">🗒️ Generate</button>
-  </div>
-  <div class="kpi-row">
-    <div class="kpi"><div class="kpi-num">FY2025</div><div class="kpi-lbl">Current Period</div></div>
-    <div class="kpi"><div class="kpi-num">100%</div><div class="kpi-lbl">Data Complete</div></div>
-    <div class="kpi"><div class="kpi-num">PDF</div><div class="kpi-lbl">Output Format</div></div>
-  </div>
-</div>
-<div class="data-table">
-  <div class="table-header"><div class="table-title">Available Export Formats</div></div>
-  <table>
-    <tr><th>Format</th><th>Contents</th><th>Use For</th><th></th></tr>
-    <tr><td>📄 Board Summary PDF</td><td>KPIs + YoY charts</td><td>Board presentations</td><td><button class="btn" onclick="generateModuleReport('${name}')">Generate</button></td></tr>
-    <tr><td>📊 Excel Workbook</td><td>Full data tables</td><td>Analysis & backup</td><td><button class="btn" onclick="showToast('⬇','Excel workbook prepared!')">Export</button></td></tr>
-    <tr><td>📋 CSV Raw Data</td><td>All records</td><td>Data transfer</td><td><button class="btn" onclick="exportData()">Export</button></td></tr>
-  </table>
-</div>`;
-}
-
-function saveEntry(section) {
-  const name = SECTIONS[section].name;
-  showToast('✓', `Entry saved to ${name}!`);
-}
-
-function simulateUpload(section) {
-  const name = SECTIONS[section].name;
-  showModal(`
-    <div class="modal-title">Uploading to ${name}</div>
-    <div class="modal-sub">Processing your file — this only takes a moment.</div>
-    <div class="modal-progress"><div class="modal-progress-bar" id="prog-bar" style="width:0%"></div></div>
-    <div class="modal-steps" id="modal-steps">
-      <div class="modal-step"><div class="step-circle step-active" id="s1">1</div><span>Validating file format</span></div>
-      <div class="modal-step"><div class="step-circle step-pending" id="s2">2</div><span>Matching to store/route profiles</span></div>
-      <div class="modal-step"><div class="step-circle step-pending" id="s3">3</div><span>Importing records to database</span></div>
-      <div class="modal-step"><div class="step-circle step-pending" id="s4">4</div><span>Updating dashboard & reports</span></div>
-    </div>
-    <div id="modal-done" style="display:none;text-align:center;padding:12px 0;">
-      <div style="font-size:32px;margin-bottom:8px;">✅</div>
-      <div style="font-size:15px;font-weight:600;margin-bottom:4px;">Upload complete!</div>
-      <div style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">All records imported successfully.</div>
-      <button class="btn btn-primary" onclick="closeModal()">Done</button>
-    </div>
-  `);
-  // Animate progress
-  const steps = [['prog-bar','10%'],['prog-bar','35%'],['prog-bar','70%'],['prog-bar','100%']];
-  const circles = ['s1','s2','s3','s4'];
-  let i = 0;
-  function next() {
-    if (i > 0) {
-      const prev = document.getElementById(circles[i-1]);
-      if (prev) { prev.className='step-circle step-done'; prev.textContent='✓'; }
+function runSteps(pbArr,pcts,cirs,delay){
+  var i=0;
+  function step(){
+    if(i>0){
+      var p=document.getElementById(cirs[i-1]);
+      if(p){p.className='sc2 sd';p.textContent='✓';}
     }
-    if (i < steps.length) {
-      const bar = document.getElementById(steps[i][0]);
-      if (bar) bar.style.width = steps[i][1];
-      const cur = document.getElementById(circles[i]);
-      if (cur) cur.className='step-circle step-active';
+    if(i<cirs.length){
+      var bar=document.getElementById(pbArr[0]);
+      if(bar) bar.style.width=pcts[i];
+      var c=document.getElementById(cirs[i]);
+      if(c) c.className='sc2 sa';
       i++;
-      setTimeout(next, 800);
+      setTimeout(step,delay);
     } else {
-      const last = document.getElementById(circles[circles.length-1]);
-      if (last) { last.className='step-circle step-done'; last.textContent='✓'; }
-      setTimeout(() => {
-        const done = document.getElementById('modal-done');
-        const stps = document.getElementById('modal-steps');
-        if (done) done.style.display='block';
-        if (stps) stps.style.display='none';
-      }, 400);
+      setTimeout(function(){
+        var d=document.getElementById('md');
+        var s=document.getElementById('mst');
+        if(d) d.style.display='block';
+        if(s) s.style.display='none';
+      },350);
     }
   }
-  setTimeout(next, 300);
+  setTimeout(step,300);
 }
 
-function generateBoardReport() {
-  // Show generation progress modal first, then reveal full report
-  showModal(`
-    <div class="modal-title">Generating Board Report Packet</div>
-    <div class="modal-sub">Pulling FY2025 data across all modules...</div>
-    <div class="modal-progress"><div class="modal-progress-bar" id="prog-bar" style="width:0%"></div></div>
-    <div class="modal-steps" id="modal-steps">
-      <div class="modal-step"><div class="step-circle step-active" id="s1">1</div><span>Compiling Grocery Rescue data</span></div>
-      <div class="modal-step"><div class="step-circle step-pending" id="s2">2</div><span>Compiling Mobile Pantry & Pantry Pack data</span></div>
-      <div class="modal-step"><div class="step-circle step-pending" id="s3">3</div><span>Calculating YoY comparisons</span></div>
-      <div class="modal-step"><div class="step-circle step-pending" id="s4">4</div><span>Formatting 18-page board packet</span></div>
-    </div>
-    <div id="modal-done" style="display:none;text-align:center;padding:8px 0;">
-      <div style="font-size:28px;margin-bottom:6px;">🗒️</div>
-      <div style="font-size:14px;font-weight:600;margin-bottom:4px;">Report ready!</div>
-      <div style="display:flex;gap:8px;justify-content:center;">
-        <button class="btn btn-primary" onclick="closeModal();showBoardReport()">Preview Report →</button>
-        <button class="btn" onclick="closeModal();showToast('⬇','Downloading PDF...')">Download PDF</button>
-      </div>
-    </div>
-  `);
-  const steps = [['prog-bar','25%'],['prog-bar','55%'],['prog-bar','80%'],['prog-bar','100%']];
-  const circles = ['s1','s2','s3','s4'];
-  let i = 0;
-  function next() {
-    if (i > 0) {
-      const prev = document.getElementById(circles[i-1]);
-      if (prev) { prev.className='step-circle step-done'; prev.textContent='✓'; }
-    }
-    if (i < steps.length) {
-      const bar = document.getElementById(steps[i][0]);
-      if (bar) bar.style.width = steps[i][1];
-      const cur = document.getElementById(circles[i]);
-      if (cur) cur.className='step-circle step-active';
-      i++;
-      setTimeout(next, 650);
-    } else {
-      const last = document.getElementById(circles[circles.length-1]);
-      if (last) { last.className='step-circle step-done'; last.textContent='✓'; }
-      setTimeout(() => {
-        const done = document.getElementById('modal-done');
-        const stps = document.getElementById('modal-steps');
-        if (done) done.style.display='block';
-        if (stps) stps.style.display='none';
-      }, 300);
-    }
-  }
-  setTimeout(next, 300);
+function saveEntry(nm){toast('✓','Entry saved to '+nm+'!');}
+
+// ===== MOBILE PANTRY =====
+function mobOv(){return ''+
+'<div style="margin-bottom:18px;"><h2 style="font-family:\'DM Serif Display\',serif;font-size:22px;margin-bottom:3px;">Mobile Pantry</h2>'+
+'<p style="font-size:12px;color:var(--muted);">FY2025 · Bus & Truck Routes · Davis County</p></div>'+
+'<div class="sr">'+
+  sc('Households Served','8,342','↑ 14% vs last year','sup')+
+  sc('Total Individuals','23,618','↑ 11% vs last year','sup')+
+  sc('Active Stops','18','+3 new this year','sup')+
+  sc('Seniors 55+','41%','of households served','sne')+
+'</div>'+
+'<div class="dt"><div class="dth"><div class="dtt">Recent Route Stops</div>'+
+'<div class="dta"><button class="btn btn-g" onclick="showTab(\'upload\')">+ Log Stop</button></div></div>'+
+'<table><tr><th>Date</th><th>Route</th><th>Location</th><th>HH</th><th>People</th><th>Seniors</th><th>New</th><th>Status</th></tr>'+
+row(['May 9','Bus A','Bountiful Rec Center','84','231','38','7',badge('Complete','bg')])+
+row(['May 9','Truck 2','Woods Cross City Hall','62','178','29','4',badge('Complete','bg')])+
+row(['May 7','Bus B','North Salt Lake Park','71','203','31','6',badge('Complete','bg')])+
+row(['May 7','Truck 1','Centerville Sr Center','48','119','44','2',badge('Complete','bg')])+
+row(['May 14','Bus A','Bountiful Rec Center','—','—','—','—',badge('Scheduled','bb')])+
+'</table></div>'+
+'<div class="dt"><div class="dth"><div class="dtt">Monthly Households Served</div></div>'+
+'<div style="padding:14px 18px;">'+chartBars([520,580,612,695,670,710,740,780,760,810,840,880],900)+'</div></div>';}
+
+function mobData(){return ''+
+'<div style="margin-bottom:16px;"><h2 style="font-family:\'DM Serif Display\',serif;font-size:20px;">All Route Stops · FY2025</h2></div>'+
+'<div class="dt"><div class="dth"><div class="dtt">Stop Records</div>'+
+'<div class="dta"><button class="btn" onclick="toast(\'⬇\',\'CSV exported!\')">⬇ Export</button>'+
+'<button class="btn btn-g" onclick="showTab(\'upload\')">+ Add Stop</button></div></div>'+
+'<table><tr><th>Date</th><th>Route</th><th>Location</th><th>ZIP</th><th>HH</th><th>Indiv</th><th>Vouchers</th><th>Seniors</th><th>New</th></tr>'+
+row(['May 9','Bus A','Bountiful Rec Center','84010','84','231','12','38','7'])+
+row(['May 9','Truck 2','Woods Cross City Hall','84087','62','178','8','29','4'])+
+row(['May 7','Bus B','North Salt Lake Park','84054','71','203','9','31','6'])+
+row(['May 7','Truck 1','Centerville Sr Center','84014','48','119','5','44','2'])+
+row(['May 2','Bus A','Bountiful Rec Center','84010','79','218','11','35','5'])+
+row(['May 2','Truck 2','Farmington City Hall','84025','55','161','7','24','3'])+
+'</table></div>';}
+
+function mobUp(){return uploadForm('Route Stop','Mobile Pantry',['Date','Route','Location','ZIP Code','Households','Individuals','Vouchers','Seniors 55+','New Clients','Notes'],'btn-g');}
+function mobRpt(){return genericReport('Mobile Pantry','route stops','18 active stops · Bus & Truck routes','btn-g');}
+
+// ===== PANTRY PACKS =====
+function ppOv(){return ''+
+'<div style="margin-bottom:18px;"><h2 style="font-family:\'DM Serif Display\',serif;font-size:22px;margin-bottom:3px;">Pantry Packs</h2>'+
+'<p style="font-size:12px;color:var(--muted);">FY2025 · Assembly Events & School Distribution</p></div>'+
+'<div class="sr">'+
+  sc('Packs Assembled','14,820','↑ 18% vs last year','sup')+
+  sc('Schools Served','23','+2 new schools','sup')+
+  sc('Assembly Events','48','sessions this year','sne')+
+  sc('Lbs Distributed','44,460','↑ 16% vs last year','sup')+
+'</div>'+
+'<div class="dt"><div class="dth"><div class="dtt">Recent Assembly Events</div>'+
+'<div class="dta"><button class="btn btn-o" onclick="showTab(\'upload\')">+ Log Event</button></div></div>'+
+'<table><tr><th>Date</th><th>Location</th><th>Volunteers</th><th>Packs</th><th>Lbs</th><th>School</th><th>Status</th></tr>'+
+row(['May 8','Main Warehouse','32','480','1,440','Davis High',badge('Complete','bg')])+
+row(['May 6','Community Room A','18','260','780','Mueller Park Jr High',badge('Complete','bg')])+
+row(['May 3','Main Warehouse','41','610','1,830','Valley View Elem',badge('Complete','bg')])+
+row(['May 15','Main Warehouse','—','—','—','TBD',badge('Scheduled','bb')])+
+'</table></div>'+
+'<div class="rc"><div class="rsh">Inventory Status</div>'+
+'<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">'+
+  inv('Peanut Butter','2,840 jars','🟢 Good')+inv('Canned Beans','1,920 cans','🟡 Low')+
+  inv('Pasta','3,100 lbs','🟢 Good')+inv('Cereal','890 boxes','🔴 Reorder')+
+'</div></div>';}
+
+function ppData(){return ''+
+'<div style="margin-bottom:16px;"><h2 style="font-family:\'DM Serif Display\',serif;font-size:20px;">Assembly Event Records · FY2025</h2></div>'+
+'<div class="dt"><div class="dth"><div class="dtt">All Events</div>'+
+'<div class="dta"><button class="btn" onclick="toast(\'⬇\',\'Exported!\')">⬇ Export</button>'+
+'<button class="btn btn-o" onclick="showTab(\'upload\')">+ Add</button></div></div>'+
+'<table><tr><th>Date</th><th>Location</th><th>Volunteers</th><th>Packs</th><th>Lbs</th><th>Schools</th><th>Delivered</th></tr>'+
+row(['May 8','Main Warehouse','32','480','1,440','Davis High','Yes'])+
+row(['May 6','Community Room A','18','260','780','Mueller Park Jr High','Yes'])+
+row(['May 3','Main Warehouse','41','610','1,830','Valley View Elem','Yes'])+
+row(['Apr 29','Main Warehouse','28','420','1,260','Bountiful High','Yes'])+
+row(['Apr 26','Community Room A','22','330','990','Millcreek Jr High','Yes'])+
+'</table></div>';}
+
+function ppUp(){return uploadForm('Assembly Event','Pantry Packs',['Date','Location','Volunteers','Packs Assembled','Weight (lbs)','Schools Delivered','Notes'],'btn-o');}
+function ppRpt(){return genericReport('Pantry Packs','assembly events','48 events · 23 schools served','btn-o');}
+
+// ===== GROCERY RESCUE =====
+function grOv(){return ''+
+'<div style="margin-bottom:18px;"><h2 style="font-family:\'DM Serif Display\',serif;font-size:22px;margin-bottom:3px;">Grocery Rescue</h2>'+
+'<p style="font-size:12px;color:var(--muted);">FY2025 · 16 Store Partners · 43% of Total Incoming Food</p></div>'+
+'<div class="sr">'+
+  sc('Total Rescued (lbs)','1.18M','↑ 22% vs last year','sup')+
+  sc('Store Partners','16','+2 this year','sup')+
+  sc('Weekly Pickups','84','across all partners','sne')+
+  sc('Avg per Pickup','268 lbs','↑ 8% efficiency','sup')+
+'</div>'+
+'<div class="dt"><div class="dth"><div class="dtt">Recent Pickups</div>'+
+'<div class="dta"><button class="btn btn-go" onclick="showTab(\'upload\')">+ Log Pickup</button></div></div>'+
+'<table><tr><th>Date</th><th>Store</th><th>Produce</th><th>Bakery</th><th>Dairy</th><th>Total lbs</th><th>Driver</th></tr>'+
+row(['May 10','Harmons Bountiful','142 lbs','88 lbs','34 lbs','264 lbs','Mike S.'])+
+row(['May 10','Smith\'s Centerville','198 lbs','115 lbs','52 lbs','365 lbs','Rachel T.'])+
+row(['May 10','Costco Bountiful','320 lbs','0','180 lbs','500 lbs','Jim P.'])+
+row(['May 9','Walmart N. Salt Lake','175 lbs','94 lbs','48 lbs','317 lbs','Sara M.'])+
+row(['May 9','Target Bountiful','89 lbs','62 lbs','0','151 lbs','Mike S.'])+
+row(['May 8','Natural Grocers','210 lbs','76 lbs','28 lbs','314 lbs','Rachel T.'])+
+'</table></div>'+
+'<div class="dt"><div class="dth"><div class="dtt">Top Partners by Volume · FY2025</div></div>'+
+'<table><tr><th>Store</th><th>Pickups</th><th>Total lbs</th><th>Avg/Pickup</th><th>Share</th></tr>'+
+row(['Costco','312','156,000','500 lbs',badge('13.2%','bgo')])+
+row(['Smith\'s (4 locations)','624','218,400','350 lbs',badge('18.5%','bgo')])+
+row(['Walmart (3 locations)','468','140,400','300 lbs',badge('11.9%','bgo')])+
+row(['Harmons','312','93,600','300 lbs',badge('7.9%','bgo')])+
+row(['WinCo','156','54,600','350 lbs',badge('4.6%','bgo')])+
+row(['Natural Grocers','156','39,000','250 lbs',badge('3.3%','bgo')])+
+'</table></div>';}
+
+function grData(){return ''+
+'<div style="margin-bottom:16px;"><h2 style="font-family:\'DM Serif Display\',serif;font-size:20px;">All Grocery Rescue Pickups · FY2025</h2></div>'+
+'<div class="dt"><div class="dth"><div class="dtt">Pickup Log</div>'+
+'<div class="dta"><button class="btn" onclick="toast(\'⬇\',\'Exported!\')">⬇ Export</button></div></div>'+
+'<table><tr><th>Date</th><th>Store</th><th>Produce</th><th>Bakery</th><th>Dairy</th><th>Meat</th><th>Total lbs</th><th>Receipt #</th></tr>'+
+row(['May 10','Harmons Bountiful','142','88','34','0','264','HR-2405-001'])+
+row(['May 10','Smith\'s Centerville','198','115','52','0','365','SM-2405-001'])+
+row(['May 10','Costco Bountiful','320','0','180','0','500','CO-2405-001'])+
+row(['May 9','Walmart N SL','175','94','48','0','317','WM-2405-001'])+
+row(['May 9','Target Bountiful','89','62','0','0','151','TG-2405-001'])+
+'</table></div>';}
+
+function grUp(){return uploadForm('Grocery Pickup','Grocery Rescue',['Date','Store Partner','Produce (lbs)','Bakery (lbs)','Dairy (lbs)','Meat (lbs)','Driver','Receipt Number','Notes'],'btn-go');}
+function grRpt(){return genericReport('Grocery Rescue','store pickups','16 partners · 84 weekly pickups','btn-go');}
+
+// ===== VOLUNTEERS =====
+function volOv(){return ''+
+'<div style="margin-bottom:18px;"><h2 style="font-family:\'DM Serif Display\',serif;font-size:22px;margin-bottom:3px;">Volunteer Hub</h2>'+
+'<p style="font-size:12px;color:var(--muted);">FY2025 · 44,026 Total Hours Logged</p></div>'+
+'<div class="sr">'+
+  sc('Total Hours','44,026','↑ 12% vs last year','sup')+
+  sc('Active Volunteers','312','+28 new this year','sup')+
+  sc('Dollar Equivalent','$1.12M','at $25.50/hr rate','sne')+
+  sc('Avg Hours/Vol','141','↑ 8% engagement','sup')+
+'</div>'+
+'<div class="dt"><div class="dth"><div class="dtt">Top Volunteers · FY2025</div>'+
+'<div class="dta"><button class="btn" style="background:var(--v);color:#fff;border-color:var(--v);" onclick="showTab(\'upload\')">+ Log Hours</button></div></div>'+
+'<table><tr><th>Name</th><th>Role</th><th>Hours YTD</th><th>Events</th><th>Since</th><th>Status</th></tr>'+
+row(['Dorothy M.','Route Driver','342','86','2018',badge('Active','bg')])+
+row(['Harold K.','Warehouse Lead','318','79','2019',badge('Active','bg')])+
+row(['Margaret L.','Pack Assembly','297','74','2020',badge('Active','bg')])+
+row(['Bob & June T.','Sort & Pack','281','70','2017',badge('Active','bg')])+
+row(['Church Group A','Group Events','1,240','12','2021',badge('Group','bb')])+
+row(['LDS Ward #14','Assembly Days','980','9','2022',badge('Group','bb')])+
+'</table></div>';}
+
+function volData(){return ''+
+'<div style="margin-bottom:16px;"><h2 style="font-family:\'DM Serif Display\',serif;font-size:20px;">Volunteer Hour Log</h2></div>'+
+'<div class="dt"><div class="dth"><div class="dtt">Recent Hours</div>'+
+'<div class="dta"><button class="btn" onclick="toast(\'⬇\',\'Exported!\')">⬇ Export</button></div></div>'+
+'<table><tr><th>Date</th><th>Volunteer</th><th>Activity</th><th>Hours</th><th>Verified</th></tr>'+
+row(['May 10','Dorothy M.','Mobile Pantry Route','4.0','Yes'])+
+row(['May 10','Harold K.','Warehouse Intake','6.0','Yes'])+
+row(['May 10','Margaret L.','Pack Assembly','3.5','Yes'])+
+row(['May 9','Bob T.','Sort & Distribution','5.0','Yes'])+
+row(['May 8','Church Group A','Assembly Event','84.0','Yes'])+
+'</table></div>';}
+
+function volUp(){return uploadForm('Volunteer Hours','Volunteer Hub',['Date','Volunteer Name','Activity / Program','Hours','Notes'],'btn-v',true);}
+function volRpt(){return genericReport('Volunteers','volunteer hours','312 active volunteers · 44,026 hours','btn-v');}
+
+// ===== QUICKBOOKS =====
+function qbOv(){return ''+
+'<div style="margin-bottom:18px;"><h2 style="font-family:\'DM Serif Display\',serif;font-size:22px;margin-bottom:3px;">QuickBooks Sync</h2>'+
+'<p style="font-size:12px;color:var(--muted);">Connected to QuickBooks Online · No Replay USA NA Inc</p></div>'+
+'<div style="background:linear-gradient(135deg,#edf9eb,#d4f5d0);border-radius:10px;padding:16px 18px;border:1.5px solid rgba(44,160,28,.25);margin-bottom:18px;display:flex;align-items:center;gap:14px;">'+
+'<div style="font-size:32px;">✅</div>'+
+'<div style="flex:1;"><div style="font-size:14px;font-weight:600;color:#1a5c14;">QuickBooks Online — Connected</div>'+
+'<div style="font-size:12px;color:#2a7a22;">Last synced: Today, 8:42 AM</div></div>'+
+'<button class="btn btn-qb" onclick="toast(\'🔄\',\'Syncing with QuickBooks...\')">Sync Now</button></div>'+
+'<div class="sr">'+
+  sc('Revenue YTD','$1.479M','↑ 45.7% vs last year','sup')+
+  sc('Expenses YTD','$1.312M','88.7% expense ratio','sne')+
+  sc('Unreconciled','3','transactions pending','sne')+
+  sc('Active Grants','12','tracked in QB','sne')+
+'</div>'+
+'<div class="dt"><div class="dth"><div class="dtt">Recent Transactions — Auto-Synced</div>'+
+'<div class="dta"><button class="btn btn-qb" onclick="showTab(\'upload\')">+ Manual Entry</button></div></div>'+
+'<table><tr><th>Date</th><th>Description</th><th>Category</th><th>Amount</th><th>QB Status</th></tr>'+
+'<tr><td>May 10</td><td>Grocery Rescue Transport Fuel</td><td>Program Expense</td><td style="color:#c0392b;">-$142.50</td><td>'+badge('Synced ✓','bqb')+'</td></tr>'+
+'<tr><td>May 9</td><td>USDA CSFP Grant Deposit</td><td>Grant Revenue</td><td style="color:#2d7a45;">+$28,400</td><td>'+badge('Synced ✓','bqb')+'</td></tr>'+
+'<tr><td>May 8</td><td>Community Donation</td><td>Donation Revenue</td><td style="color:#2d7a45;">+$500</td><td>'+badge('Synced ✓','bqb')+'</td></tr>'+
+'<tr><td>May 7</td><td>Volunteer Mileage Reimbursement</td><td>Program Expense</td><td style="color:#c0392b;">-$89.20</td><td>'+badge('Pending ⏳','bgo')+'</td></tr>'+
+'<tr><td>May 7</td><td>UFB Food Purchase — Produce</td><td>Food Expense</td><td style="color:#c0392b;">-$2,140</td><td>'+badge('Pending ⏳','bgo')+'</td></tr>'+
+'<tr><td>May 6</td><td>Davis County Grant Q2</td><td>Grant Revenue</td><td style="color:#2d7a45;">+$15,000</td><td>'+badge('Synced ✓','bqb')+'</td></tr>'+
+'</table></div>'+
+'<div class="rc"><div class="rsh">What Auto-Syncs from This System → QuickBooks</div>'+
+'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">'+
+  qbmap('🛒 Grocery Rescue','Transport & labor costs → QB: Program Expense · Grocery Rescue class')+
+  qbmap('🚌 Mobile Pantry','Route operating costs → QB: Program Expense · Mobile Pantry class')+
+  qbmap('📦 Pantry Packs','Assembly supplies → QB: Program Expense · Pantry Pack class')+
+  qbmap('🤝 Volunteers','In-kind hours calculated → QB: In-Kind Contributions')+
+  qbmap('💵 Donations','Every donation logged here posts to QB: 4100 Donation Revenue')+
+  qbmap('🏛️ Grants','Grant deposits & drawdowns → QB grant tracking classes')+
+'</div></div>';}
+
+function qbData(){return ''+
+'<div style="margin-bottom:16px;"><h2 style="font-family:\'DM Serif Display\',serif;font-size:20px;">QB Transaction Log · FY2025</h2></div>'+
+'<div class="dt"><div class="dth"><div class="dtt">All Synced Transactions</div>'+
+'<div class="dta"><button class="btn btn-qb" onclick="toast(\'⬇\',\'Exported to QB format!\')">⬇ Export to QB</button></div></div>'+
+'<table><tr><th>Date</th><th>QB Account</th><th>Description</th><th>Class</th><th>Amount</th><th>Status</th></tr>'+
+'<tr><td>May 10</td><td>6100 Program Expenses</td><td>Grocery Rescue Transport</td><td>Grocery Rescue</td><td style="color:#c0392b;">-$142.50</td><td>'+badge('Synced','bqb')+'</td></tr>'+
+'<tr><td>May 9</td><td>4200 Grant Revenue</td><td>USDA CSFP Deposit</td><td>Unrestricted</td><td style="color:#2d7a45;">+$28,400</td><td>'+badge('Synced','bqb')+'</td></tr>'+
+'<tr><td>May 7</td><td>6100 Program Expenses</td><td>Volunteer Mileage</td><td>Mobile Pantry</td><td style="color:#c0392b;">-$89.20</td><td>'+badge('Pending','bgo')+'</td></tr>'+
+'<tr><td>May 6</td><td>4200 Grant Revenue</td><td>Davis County Q2 Grant</td><td>Restricted</td><td style="color:#2d7a45;">+$15,000</td><td>'+badge('Synced','bqb')+'</td></tr>'+
+'</table></div>';}
+
+function qbUp(){return ''+
+'<div style="margin-bottom:16px;"><h2 style="font-family:\'DM Serif Display\',serif;font-size:20px;">Manual QB Entry</h2>'+
+'<p style="font-size:12px;color:var(--muted);">Entries here post directly to your QuickBooks chart of accounts.</p></div>'+
+'<div class="rc">'+
+'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">'+
+  fld('Date','date')+fld('QB Account','text')+fld('Description','text')+fld('Amount','text')+fld('Class / Program','text')+fld('Memo','text')+
+'</div><button class="btn btn-qb" onclick="saveEntry(\'QuickBooks\')">Post to QuickBooks</button></div>';}
+
+function qbRpt(){return ''+
+'<div style="margin-bottom:16px;"><h2 style="font-family:\'DM Serif Display\',serif;font-size:20px;">Financial Reports</h2></div>'+
+'<div class="dt"><div class="dth"><div class="dtt">Pull Reports from QuickBooks</div></div>'+
+'<table><tr><th>Report</th><th>Description</th><th></th></tr>'+
+'<tr><td><strong>Profit & Loss YTD</strong></td><td>Revenue vs expenses by program class</td><td><button class="btn btn-qb" onclick="toast(\'⬇\',\'Pulling P&L from QuickBooks...\')">Pull from QB</button></td></tr>'+
+'<tr><td><strong>Grant Budget vs Actual</strong></td><td>All active grants with spend-down status</td><td><button class="btn btn-qb" onclick="toast(\'⬇\',\'Generating grant report...\')">Pull from QB</button></td></tr>'+
+'<tr><td><strong>Balance Sheet</strong></td><td>Current assets, liabilities, net assets</td><td><button class="btn btn-qb" onclick="toast(\'⬇\',\'Pulling Balance Sheet...\')">Pull from QB</button></td></tr>'+
+'<tr><td><strong>990 Prep Data</strong></td><td>Program revenue & expense summary for tax prep</td><td><button class="btn btn-qb" onclick="toast(\'⬇\',\'Preparing 990 data...\')">Generate</button></td></tr>'+
+'</table></div>';}
+
+// ===== REPORTS =====
+function rptOv(){return ''+
+'<div style="margin-bottom:18px;"><h2 style="font-family:\'DM Serif Display\',serif;font-size:22px;margin-bottom:3px;">Reports & Board Documents</h2>'+
+'<p style="font-size:12px;color:var(--muted);">FY2025 · Fiscal Year July 1 – June 30</p></div>'+
+'<div style="background:linear-gradient(135deg,#1e3a5f,#2d5a8e);border-radius:12px;padding:24px;color:#fff;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;gap:16px;">'+
+'<div><div style="font-size:10px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;opacity:.7;margin-bottom:8px;">One-Click Generation</div>'+
+'<div style="font-family:\'DM Serif Display\',serif;font-size:20px;margin-bottom:5px;">Generate Board Report Packet</div>'+
+'<div style="font-size:12px;opacity:.8;">Pulls all FY2025 data, calculates YoY comparisons, formats a ready-to-present board packet.</div></div>'+
+'<button onclick="startBoardReport()" style="background:#fff;color:#1e3a5f;border:none;padding:12px 22px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;font-family:inherit;">🗒️ Generate Now</button></div>'+
+'<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;">'+
+'<div class="dt"><div class="dth"><div class="dtt">Recent Reports</div></div>'+
+'<table><tr><th>Report</th><th>Date</th><th></th></tr>'+
+'<tr><td>Q3 FY2025 Summary</td><td>Apr 30</td><td><button class="btn" onclick="toast(\'⬇\',\'Downloading...\')">⬇</button></td></tr>'+
+'<tr><td>Feb 2025 Board Packet</td><td>Feb 28</td><td><button class="btn" onclick="toast(\'⬇\',\'Downloading...\')">⬇</button></td></tr>'+
+'<tr><td>Annual Report FY2024</td><td>Jul 15, 2024</td><td><button class="btn" onclick="toast(\'⬇\',\'Downloading...\')">⬇</button></td></tr>'+
+'</table></div>'+
+'<div class="dt"><div class="dth"><div class="dtt">Scheduled Reports</div></div>'+
+'<table><tr><th>Report</th><th>Next Run</th></tr>'+
+'<tr><td>Monthly KPI Summary</td><td>'+badge('Jun 1','bg')+'</td></tr>'+
+'<tr><td>Board Packet</td><td>'+badge('Jul 1','bb')+'</td></tr>'+
+'<tr><td>Volunteer Hours</td><td>'+badge('May 17','bg')+'</td></tr>'+
+'</table></div></div>'+
+'<div class="rc"><div class="rsh">Year-Over-Year Key Metrics</div>'+
+'<table><tr><th>Metric</th><th>FY2024</th><th>FY2025</th><th>Change</th></tr>'+
+'<tr><td>Total lbs Tracked</td><td style="color:var(--muted);">2,120,000</td><td><strong>2,750,000</strong></td><td class="sup">↑ 30%</td></tr>'+
+'<tr><td>Households Served</td><td style="color:var(--muted);">93,962</td><td><strong>102,209</strong></td><td class="sup">↑ 9.4%</td></tr>'+
+'<tr><td>Revenue</td><td style="color:var(--muted);">$1,014,510</td><td><strong>$1,479,082</strong></td><td class="sup">↑ 45.7%</td></tr>'+
+'<tr><td>Volunteer Hours</td><td style="color:var(--muted);">39,312</td><td><strong>44,026</strong></td><td class="sup">↑ 12.0%</td></tr>'+
+'<tr><td>Grocery Rescue lbs</td><td style="color:var(--muted);">968,000</td><td><strong>1,182,500</strong></td><td class="sup">↑ 22.2%</td></tr>'+
+'<tr><td>Mobile Pantry HH</td><td style="color:var(--muted);">7,318</td><td><strong>8,342</strong></td><td class="sup">↑ 14.0%</td></tr>'+
+'</table></div>';}
+
+function rptUp(){return ''+
+'<div style="margin-bottom:16px;"><h2 style="font-family:\'DM Serif Display\',serif;font-size:20px;">Import Source Data</h2>'+
+'<p style="font-size:12px;color:var(--muted);">Upload PantrySoft exports, QuickBooks reports, or spreadsheet backups.</p></div>'+
+'<div class="uz" onclick="uploadAnim(\'Importing Source Data\')"><div class="ui">📊</div>'+
+'<div class="ut">Drop any data file here</div>'+
+'<div class="us">PantrySoft exports, QuickBooks .csv, Excel workbooks</div></div>';}
+
+function startBoardReport(){
+  modal('<div class="mot">Generating Board Report Packet</div>'+
+  '<div class="mos">Pulling FY2025 data across all modules...</div>'+
+  '<div class="mop"><div class="mopb" id="pb" style="width:0%"></div></div>'+
+  '<div class="mst" id="mst">'+
+  '<div class="msi"><div class="sc2 sa" id="ss1">1</div><span>Compiling Grocery Rescue & Pantry Pack data</span></div>'+
+  '<div class="msi"><div class="sc2 sp" id="ss2">2</div><span>Compiling Mobile Pantry route data</span></div>'+
+  '<div class="msi"><div class="sc2 sp" id="ss3">3</div><span>Calculating year-over-year comparisons</span></div>'+
+  '<div class="msi"><div class="sc2 sp" id="ss4">4</div><span>Formatting 18-page board packet PDF</span></div>'+
+  '</div><div id="md" style="display:none;text-align:center;padding:10px 0;">'+
+  '<div style="font-size:28px;margin-bottom:6px;">🗒️</div>'+
+  '<div style="font-size:14px;font-weight:600;margin-bottom:4px;">Board Report Ready!</div>'+
+  '<div style="font-size:12px;color:var(--muted);margin-bottom:14px;">July audit prep: <strong>2 minutes</strong> instead of a month.</div>'+
+  '<div style="display:flex;gap:8px;justify-content:center;">'+
+  '<button class="btn btn-b" onclick="closeModal();showBoardReport()">Preview Full Report →</button>'+
+  '<button class="btn" onclick="closeModal();toast(\'⬇\',\'Downloading PDF...\')">Download PDF</button>'+
+  '</div></div>');
+  runSteps(['pb'],['25%','55%','80%','100%'],['ss1','ss2','ss3','ss4'],650);
 }
 
-function showBoardReport() {
-  // Show the full board report in the main content area
-  document.getElementById('main-content').innerHTML = getBoardReportHTML();
-  setActiveNav('nav-report');
+function showBoardReport(){
+  document.getElementById('mc').innerHTML=boardReportHTML();
+  setNav('n-report');
 }
 
-function getBoardReportHTML() {
-  return `
-<div style="max-width:800px;margin:0 auto;">
-  <!-- Back button -->
-  <button class="btn" onclick="getReportsOverview && (document.getElementById('main-content').innerHTML = getReportsOverview())" style="margin-bottom:20px;">← Back to Reports</button>
+function boardReportHTML(){
+  return ''+
+'<div style="max-width:780px;margin:0 auto;">'+
+'<button class="btn" onclick="showTab(\'report\')" style="margin-bottom:16px;">← Back to Reports</button>'+
+'<div style="background:var(--white);border-radius:14px;border:1px solid var(--bdr);overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.08);">'+
 
-  <!-- BOARD REPORT DOCUMENT -->
-  <div style="background:var(--white);border-radius:16px;border:1px solid var(--border);overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
+'<div style="background:linear-gradient(135deg,#1e3a5f,#2d5a8e);padding:40px;color:#fff;">'+
+'<div style="font-size:10px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;opacity:.7;margin-bottom:14px;">Board of Directors · Quarterly Report</div>'+
+'<div style="font-family:\'DM Serif Display\',serif;font-size:30px;line-height:1.2;margin-bottom:6px;">Bountiful Food Pantry</div>'+
+'<div style="font-family:\'DM Serif Display\',serif;font-size:18px;font-style:italic;opacity:.85;margin-bottom:20px;">Fiscal Year 2025 · Q3 Report</div>'+
+'<div style="display:flex;gap:28px;flex-wrap:wrap;opacity:.9;">'+
+'<div><div style="font-size:10px;text-transform:uppercase;opacity:.7;">Period</div><div style="font-size:13px;font-weight:600;">January – March 2025</div></div>'+
+'<div><div style="font-size:10px;text-transform:uppercase;opacity:.7;">Prepared</div><div style="font-size:13px;font-weight:600;">May 13, 2025</div></div>'+
+'<div><div style="font-size:10px;text-transform:uppercase;opacity:.7;">Organization</div><div style="font-size:13px;font-weight:600;">No Replay USA NA Inc</div></div>'+
+'</div></div>'+
 
-    <!-- Cover -->
-    <div style="background:linear-gradient(135deg,#1e3a5f 0%,#2d5a8e 100%);padding:48px 40px;color:#fff;">
-      <div style="font-size:11px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;opacity:.7;margin-bottom:16px;">Board of Directors · Quarterly Report</div>
-      <div style="font-family:'DM Serif Display',serif;font-size:32px;line-height:1.2;margin-bottom:8px;">Bountiful Food Pantry</div>
-      <div style="font-family:'DM Serif Display',serif;font-size:20px;font-style:italic;opacity:.85;margin-bottom:24px;">Fiscal Year 2025 · Q3 Report</div>
-      <div style="display:flex;gap:32px;opacity:.9;">
-        <div><div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;opacity:.7;">Period</div><div style="font-size:14px;font-weight:600;">January – March 2025</div></div>
-        <div><div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;opacity:.7;">Prepared</div><div style="font-size:14px;font-weight:600;">May 13, 2025</div></div>
-        <div><div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;opacity:.7;">Organization</div><div style="font-size:14px;font-weight:600;">No Replay USA NA Inc</div></div>
-      </div>
-    </div>
+'<div style="padding:28px 36px;">'+
 
-    <div style="padding:32px 40px;">
+'<div class="brsec"><div class="brh">Executive Summary</div>'+
+'<p style="font-size:13px;line-height:1.75;color:var(--muted);">Bountiful Food Pantry continues to demonstrate exceptional growth during FY2025. Total pounds tracked have increased <strong style="color:var(--txt);">30% year-over-year</strong> to 2.75 million pounds, while households served have grown <strong style="color:var(--txt);">9.4% to 102,209 families</strong>. Revenue has increased <strong style="color:var(--txt);">45.7% to $1,479,082</strong>, driven by expanded grant funding and community donations. Volunteer engagement remains strong at 44,026 hours, representing approximately <strong style="color:var(--txt);">$1.12 million in contributed services</strong>.</p></div>'+
 
-      <!-- Executive Summary -->
-      <div style="margin-bottom:32px;">
-        <div style="font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#1e3a5f;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid #1e3a5f;">Executive Summary</div>
-        <p style="font-size:14px;line-height:1.7;color:var(--text-muted);">Bountiful Food Pantry continues to demonstrate exceptional growth in service delivery during FY2025. Total pounds tracked have increased <strong style="color:var(--text);">30% year-over-year</strong> to 2.75 million pounds, while households served have grown <strong style="color:var(--text);">9.4% to 102,209 families</strong>. Revenue has increased <strong style="color:var(--text);">45.7% to $1,479,082</strong>, driven by expanded grant funding and community donations. Volunteer engagement remains strong at 44,026 hours, representing approximately <strong style="color:var(--text);">$1.12 million in contributed services</strong>.</p>
-      </div>
+'<div class="brsec"><div class="brh">Key Performance Indicators · FY2025 vs FY2024</div>'+
+'<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;">'+
+kpi2('Total Pounds Tracked','2,750,000 lbs','2,120,000 lbs','↑ 30%')+
+kpi2('Households Served','102,209','93,962','↑ 9.4%')+
+kpi2('Total Revenue','$1,479,082','$1,014,510','↑ 45.7%')+
+kpi2('Volunteer Hours','44,026 hrs','39,312 hrs','↑ 12.0%')+
+kpi2('Grocery Rescue lbs','1,182,500','968,000','↑ 22.2%')+
+kpi2('Mobile Pantry HH','8,342','7,318','↑ 14.0%')+
+'</div></div>'+
 
-      <!-- Key Metrics -->
-      <div style="margin-bottom:32px;">
-        <div style="font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#1e3a5f;margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid #1e3a5f;">Key Performance Indicators · FY2025 vs FY2024</div>
-        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;">
-          ${[
-            ['Total Pounds Tracked','2,750,000 lbs','2,120,000 lbs','↑ 30%','#2d7a45'],
-            ['Households Served','102,209','93,962','↑ 9.4%','#2d7a45'],
-            ['Total Revenue','$1,479,082','$1,014,510','↑ 45.7%','#2d7a45'],
-            ['Volunteer Hours','44,026 hrs','39,312 hrs','↑ 12.0%','#2d7a45'],
-            ['Grocery Rescue lbs','1,182,500 lbs','968,000 lbs','↑ 22.2%','#2d7a45'],
-            ['Mobile Pantry HH','8,342','7,318','↑ 14.0%','#2d7a45'],
-          ].map(([label,fy25,fy24,change,color])=>\`
-          <div style="background:#f8fbf8;border-radius:10px;padding:14px 16px;border:1px solid #e0ede2;">
-            <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">\${label}</div>
-            <div style="display:flex;align-items:baseline;justify-content:space-between;">
-              <div style="font-size:18px;font-weight:700;color:var(--text);">\${fy25}</div>
-              <div style="font-size:12px;font-weight:600;color:\${color};">\${change}</div>
-            </div>
-            <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Prior year: \${fy24}</div>
-          </div>\`).join('')}
-        </div>
-      </div>
+'<div class="brsec"><div class="brh">Financial Summary · FY2025 YTD</div>'+
+'<table style="width:100%;border-collapse:collapse;font-size:13px;">'+
+'<tr style="background:#f0f4f8;"><th style="padding:9px 12px;text-align:left;color:#1e3a5f;font-weight:600;">Revenue Source</th><th style="padding:9px 12px;text-align:right;color:#1e3a5f;font-weight:600;">Amount</th><th style="padding:9px 12px;text-align:right;color:#1e3a5f;font-weight:600;">% Total</th></tr>'+
+frow('USDA / CSFP Grants','$612,000','41.4%')+
+frow('Community Donations','$384,000','26.0%')+
+frow('Davis County Grants','$248,000','16.8%')+
+frow('Corporate Sponsorships','$142,000','9.6%')+
+frow('Events & Fundraising','$93,082','6.3%')+
+'<tr style="background:#f8fbf8;font-weight:700;"><td style="padding:9px 12px;">Total Revenue</td><td style="padding:9px 12px;text-align:right;color:var(--g);">$1,479,082</td><td style="padding:9px 12px;text-align:right;">100%</td></tr>'+
+'</table></div>'+
 
-      <!-- Financial Summary -->
-      <div style="margin-bottom:32px;">
-        <div style="font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#1e3a5f;margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid #1e3a5f;">Financial Summary · FY2025 YTD</div>
-        <table style="width:100%;border-collapse:collapse;font-size:13px;">
-          <tr style="background:#f0f4f8;"><th style="padding:10px 14px;text-align:left;color:#1e3a5f;font-weight:600;">Revenue Sources</th><th style="padding:10px 14px;text-align:right;color:#1e3a5f;font-weight:600;">Amount</th><th style="padding:10px 14px;text-align:right;color:#1e3a5f;font-weight:600;">% of Total</th></tr>
-          ${[
-            ['USDA / CSFP Grants','$612,000','41.4%'],
-            ['Community Donations','$384,000','26.0%'],
-            ['Davis County Grants','$248,000','16.8%'],
-            ['Corporate Sponsorships','$142,000','9.6%'],
-            ['Events & Fundraising','$93,082','6.3%'],
-          ].map(([s,a,p])=>\`<tr style="border-bottom:1px solid #f0f4f1;"><td style="padding:10px 14px;">\${s}</td><td style="padding:10px 14px;text-align:right;font-weight:600;color:#2d7a45;">\${a}</td><td style="padding:10px 14px;text-align:right;color:var(--text-muted);">\${p}</td></tr>\`).join('')}
-          <tr style="background:#f8fbf8;font-weight:700;"><td style="padding:10px 14px;">Total Revenue</td><td style="padding:10px 14px;text-align:right;color:#2d7a45;">$1,479,082</td><td style="padding:10px 14px;text-align:right;">100%</td></tr>
-        </table>
-      </div>
+'<div class="brsec"><div class="brh">Program Highlights</div>'+
+pghl('🛒','Grocery Rescue','43% of all incoming food now comes from our 16 store partners. Costco alone contributed 156,000 lbs this year. We added 2 new partners (Dick\'s Market #2 and Sprouts) in Q2.')+
+pghl('🚌','Mobile Pantry','18 active stops across Davis County served 8,342 unique households — a 14% increase. Seniors 55+ make up 41% of those served. Three new stops added in underserved zip codes.')+
+pghl('📦','Pantry Packs','14,820 weekend food packs assembled and delivered to 23 partner schools. Assembly is now supported by 48 volunteer events per year, including weekly church group partnerships.')+
+pghl('🤝','Volunteers','312 active volunteers contributed 44,026 hours — equivalent to ~21 full-time employees. Several volunteers aged 80+ continue to serve as route drivers weekly.')+
+'</div>'+
 
-      <!-- Program Highlights -->
-      <div style="margin-bottom:32px;">
-        <div style="font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#1e3a5f;margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid #1e3a5f;">Program Highlights</div>
-        <div style="display:flex;flex-direction:column;gap:14px;">
-          ${[
-            ['🛒 Grocery Rescue','43% of all incoming food now comes from our 16 store partners. Costco alone contributed 156,000 lbs this fiscal year. We added 2 new partners (Dick's Market #2 and Sprouts) in Q2.'],
-            ['🚌 Mobile Pantry','18 active stops across Davis County served 8,342 unique households this year — a 14% increase. Seniors 55+ make up 41% of those served. Three new stops were added in underserved zip codes.'],
-            ['📦 Pantry Packs','14,820 weekend food packs assembled and delivered to 23 partner schools. Pack assembly is now supported by 48 volunteer events per year, including weekly church group partnerships.'],
-            ['🤝 Volunteers','312 active volunteers contributed 44,026 hours — equivalent to approximately 21 full-time employees. Notable: several volunteers aged 80+ continue to serve as route drivers weekly.'],
-          ].map(([title,text])=>\`
-          <div style="display:flex;gap:14px;padding:14px;background:#fafbfa;border-radius:10px;border-left:3px solid #1e3a5f;">
-            <div style="font-size:20px;flex-shrink:0;">\${title.split(' ')[0]}</div>
-            <div><div style="font-size:13px;font-weight:600;margin-bottom:4px;">\${title.slice(3)}</div><div style="font-size:13px;color:var(--text-muted);line-height:1.6;">\${text}</div></div>
-          </div>\`).join('')}
-        </div>
-      </div>
+'<div class="brsec"><div class="brh">Board Action Items</div>'+
+'<table style="width:100%;border-collapse:collapse;font-size:13px;">'+
+'<tr style="background:#f0f4f8;"><th style="padding:9px 12px;text-align:left;color:#1e3a5f;">Item</th><th style="padding:9px 12px;text-align:left;color:#1e3a5f;">Owner</th><th style="padding:9px 12px;text-align:left;color:#1e3a5f;">Due</th><th style="padding:9px 12px;text-align:left;color:#1e3a5f;">Status</th></tr>'+
+brow('Approve FY2026 budget proposal','Executive Director','Jun 30','Pending vote')+
+brow('Review USDA grant renewal application','Board Chair','May 31','In review')+
+brow('Authorize second warehouse expansion','Operations','Jul 1','Pending approval')+
+brow('Annual audit report review','Finance Committee','Jun 15','Scheduled')+
+'</table></div>'+
 
-      <!-- Board Action Items -->
-      <div style="margin-bottom:24px;">
-        <div style="font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#1e3a5f;margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid #1e3a5f;">Board Action Items</div>
-        <table style="width:100%;border-collapse:collapse;font-size:13px;">
-          <tr style="background:#f0f4f8;"><th style="padding:10px 14px;text-align:left;color:#1e3a5f;">Item</th><th style="padding:10px 14px;text-align:left;color:#1e3a5f;">Owner</th><th style="padding:10px 14px;text-align:left;color:#1e3a5f;">Due</th><th style="padding:10px 14px;text-align:left;color:#1e3a5f;">Status</th></tr>
-          ${[
-            ['Approve FY2026 budget proposal','Executive Director','Jun 30','Pending vote'],
-            ['Review USDA grant renewal application','Board Chair','May 31','In review'],
-            ['Authorize second warehouse expansion','Operations','Jul 1','Pending approval'],
-            ['Annual audit report review','Finance Committee','Jun 15','Scheduled'],
-          ].map(([item,owner,due,status])=>\`
-          <tr style="border-bottom:1px solid #f0f4f1;">
-            <td style="padding:10px 14px;font-weight:500;">\${item}</td>
-            <td style="padding:10px 14px;color:var(--text-muted);">\${owner}</td>
-            <td style="padding:10px 14px;color:var(--text-muted);">\${due}</td>
-            <td style="padding:10px 14px;"><span class="badge badge-gold">\${status}</span></td>
-          </tr>\`).join('')}
-        </table>
-      </div>
+'<div style="font-size:11px;color:var(--muted);text-align:center;padding:14px 0;border-top:1px solid var(--bdr);">'+
+'Generated automatically · Bountiful Food Pantry Operations System · May 13, 2025 · '+
+'<span style="color:var(--qb);">✓ Synced with QuickBooks Online</span></div>'+
 
-      <!-- Footer note -->
-      <div style="font-size:12px;color:var(--text-muted);text-align:center;padding:16px 0;border-top:1px solid var(--border);">
-        Generated automatically by Bountiful Food Pantry Operations System · May 13, 2025 · 
-        <span style="color:#2ca01c;">✓ Synced with QuickBooks Online</span>
-      </div>
+'</div></div>'+
 
-    </div><!-- /padding -->
-  </div><!-- /white card -->
+'<div style="display:flex;gap:8px;margin-top:14px;justify-content:flex-end;">'+
+'<button class="btn btn-b" onclick="toast(\'⬇\',\'Downloading 18-page board packet PDF...\')">⬇ Download PDF</button>'+
+'<button class="btn" onclick="toast(\'✉️\',\'Emailed to 7 board members!\')">✉️ Email to Board</button>'+
+'<button class="btn" onclick="toast(\'🔗\',\'Share link copied!\')">🔗 Share Link</button>'+
+'</div></div>';}
 
-  <div style="display:flex;gap:10px;margin-top:16px;justify-content:flex-end;">
-    <button class="btn btn-primary" onclick="showToast('⬇','Downloading 18-page board packet PDF...')">⬇ Download PDF</button>
-    <button class="btn" onclick="showToast('✉️','Emailed to 7 board members!')">✉️ Email to Board</button>
-    <button class="btn" onclick="showToast('🔗','Share link copied to clipboard!')">🔗 Share Link</button>
-  </div>
-</div>`;
-}
-
-
-function generateModuleReport(name) {
-  showToast('🗒️', `${name} report generated — downloading PDF...`);
-}
-
-/* ===== QUICKBOOKS ===== */
-function getQBOverview() {
-  return `
-<div style="margin-bottom:20px;"><h2 style="font-family:'DM Serif Display',serif;font-size:24px;margin-bottom:4px;">QuickBooks Integration</h2>
-<p style="font-size:13px;color:var(--text-muted);">Phase 2 Feature · Connected to QuickBooks Online</p></div>
-
-<div class="report-card" style="background:linear-gradient(135deg,#edf9eb,#d4f5d0);border:1.5px solid rgba(44,160,28,0.25);">
-  <div style="display:flex;align-items:center;gap:16px;">
-    <div style="font-size:40px;">✅</div>
-    <div>
-      <div style="font-size:15px;font-weight:600;color:#1a5c14;margin-bottom:4px;">QuickBooks Online — Connected</div>
-      <div style="font-size:13px;color:#2a7a22;">Last synced: Today, 8:42 AM · Bountiful Food Pantry (No Replay USA NA Inc)</div>
-    </div>
-    <button class="btn" style="margin-left:auto;background:#2ca01c;color:#fff;border-color:#2ca01c;" onclick="showToast('🔄','Syncing with QuickBooks...')">Sync Now</button>
-  </div>
-</div>
-
-<div class="stats-row">
-  <div class="stat-card"><div class="stat-label">Revenue YTD</div><div class="stat-value">$1.479M</div><div class="stat-change stat-up">↑ 45.7% vs last year</div></div>
-  <div class="stat-card"><div class="stat-label">Expenses YTD</div><div class="stat-value">$1.312M</div><div class="stat-change" style="color:var(--text-muted);">88.7% expense ratio</div></div>
-  <div class="stat-card"><div class="stat-label">Unreconciled</div><div class="stat-value">3</div><div class="stat-change" style="color:#c9a227;">transactions pending</div></div>
-  <div class="stat-card"><div class="stat-label">Grants Tracked</div><div class="stat-value">12</div><div class="stat-change" style="color:var(--text-muted);">active grant budgets</div></div>
-</div>
-
-<div class="data-table">
-  <div class="table-header"><div class="table-title">Recent Transactions — Auto-Synced</div>
-  <div class="table-actions"><button class="btn" onclick="showTab('upload')">+ Manual Entry</button></div></div>
-  <table>
-    <tr><th>Date</th><th>Description</th><th>Category</th><th>Amount</th><th>QB Status</th></tr>
-    <tr><td>May 10</td><td>Grocery Rescue Transport Fuel</td><td>Program Expense</td><td style="color:#c0392b;">-$142.50</td><td><span class="badge badge-green">Synced ✓</span></td></tr>
-    <tr><td>May 9</td><td>USDA CSFP Grant Deposit</td><td>Grant Revenue</td><td style="color:#2d7a45;">+$28,400.00</td><td><span class="badge badge-green">Synced ✓</span></td></tr>
-    <tr><td>May 8</td><td>Community Donation — Anonymous</td><td>Donation Revenue</td><td style="color:#2d7a45;">+$500.00</td><td><span class="badge badge-green">Synced ✓</span></td></tr>
-    <tr><td>May 7</td><td>Volunteer Mileage Reimbursement</td><td>Program Expense</td><td style="color:#c0392b;">-$89.20</td><td><span class="badge badge-gold">Pending ⏳</span></td></tr>
-    <tr><td>May 7</td><td>UFB Food Purchase — Produce</td><td>Food Expense</td><td style="color:#c0392b;">-$2,140.00</td><td><span class="badge badge-gold">Pending ⏳</span></td></tr>
-    <tr><td>May 6</td><td>Davis County Grant Q2</td><td>Grant Revenue</td><td style="color:#2d7a45;">+$15,000.00</td><td><span class="badge badge-green">Synced ✓</span></td></tr>
-  </table>
-</div>
-
-<div class="report-card">
-  <div class="report-section-title">What Auto-Syncs</div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-    ${[
-      ['📥 Donations','Every cash & check donation logged here posts automatically to QB Revenue'],
-      ['🏛️ Grants','Grant deposits and drawdowns map to QB grant tracking classes'],
-      ['🛒 Grocery Rescue','Transport & labor costs auto-categorize as Program Expenses'],
-      ['🚌 Mobile Pantry','Route operating costs post to the Mobile Pantry cost center'],
-      ['📦 Pantry Packs','Assembly supplies map to Program: Pantry Pack in QB'],
-      ['🤝 Volunteer Value','In-kind volunteer hours calculated & posted as in-kind contributions'],
-    ].map(([t,d])=>\`
-    <div style="background:var(--pantry-bg);border-radius:8px;padding:14px;">
-      <div style="font-size:13px;font-weight:600;margin-bottom:4px;">\${t}</div>
-      <div style="font-size:12px;color:var(--text-muted);">\${d}</div>
-    </div>\`).join('')}
-  </div>
-</div>`;
-}
-
-function getQBData() {
-  return `
-<div style="margin-bottom:20px;"><h2 style="font-family:'DM Serif Display',serif;font-size:22px;">QuickBooks Transaction Log</h2></div>
-<div class="data-table">
-  <div class="table-header"><div class="table-title">All Synced Transactions · FY2025</div>
-  <div class="table-actions"><button class="btn" onclick="exportData()">⬇ Export to QB</button></div></div>
-  <table>
-    <tr><th>Date</th><th>QB Account</th><th>Description</th><th>Class</th><th>Amount</th><th>Status</th></tr>
-    ${[
-      ['May 10','6100 Program Expenses','Grocery Rescue Transport','Grocery Rescue','-$142.50','Synced'],
-      ['May 9','4200 Grant Revenue','USDA CSFP Deposit','Unrestricted','+$28,400','Synced'],
-      ['May 8','4100 Donation Revenue','Anonymous Donation','General','+$500','Synced'],
-      ['May 7','6100 Program Expenses','Volunteer Mileage','Mobile Pantry','-$89.20','Pending'],
-      ['May 7','6200 Food Expenses','UFB Produce Purchase','Food Program','-$2,140','Pending'],
-      ['May 6','4200 Grant Revenue','Davis County Q2 Grant','Restricted','+$15,000','Synced'],
-    ].map(r=>\`<tr><td>\${r[0]}</td><td>\${r[1]}</td><td>\${r[2]}</td><td>\${r[3]}</td><td style="color:\${r[4].startsWith('+') ? '#2d7a45':'#c0392b'}">\${r[4]}</td><td><span class="badge \${r[5]==='Synced'?'badge-green':'badge-gold'}">\${r[5]}</span></td></tr>\`).join('')}
-  </table>
-</div>`;
-}
-
-function getQBUpload() {
-  return `
-<div style="margin-bottom:20px;"><h2 style="font-family:'DM Serif Display',serif;font-size:22px;">Manual QB Entry</h2>
-<p style="font-size:13px;color:var(--text-muted);">Entries here post directly to your QuickBooks chart of accounts.</p></div>
-<div class="report-card">
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
-    ${['Date','QB Account','Description','Amount','Class / Program','Memo'].map(f=>\`
-    <div><label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:4px;">\${f}</label>
-    <input type="\${f==='Date'?'date':'text'}" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;" placeholder="\${f}"/></div>\`).join('')}
-  </div>
-  <button class="btn" style="background:#2ca01c;color:#fff;border-color:#2ca01c;" onclick="saveEntry('quickbooks')">Post to QuickBooks</button>
-</div>`;
-}
-
-function getQBReport() {
-  return `
-<div style="margin-bottom:20px;"><h2 style="font-family:'DM Serif Display',serif;font-size:22px;">Financial Reports</h2></div>
-<div class="data-table">
-  <div class="table-header"><div class="table-title">Available QB Reports</div></div>
-  <table>
-    <tr><th>Report</th><th>Description</th><th></th></tr>
-    <tr><td>Profit & Loss YTD</td><td>Revenue vs expenses by program class</td><td><button class="btn" onclick="showToast('⬇','Pulling P&L from QuickBooks...')">Pull from QB</button></td></tr>
-    <tr><td>Grant Budget vs Actual</td><td>All active grants with spend-down status</td><td><button class="btn" onclick="showToast('⬇','Generating grant report...')">Pull from QB</button></td></tr>
-    <tr><td>Balance Sheet</td><td>Current assets, liabilities, net assets</td><td><button class="btn" onclick="showToast('⬇','Pulling Balance Sheet...')">Pull from QB</button></td></tr>
-    <tr><td>990 Prep Data</td><td>Program revenue & expense summary for tax prep</td><td><button class="btn" onclick="showToast('⬇','Preparing 990 data...')">Generate</button></td></tr>
-  </table>
-</div>`;
-}
-
+// ===== HELPER FUNCTIONS =====
+function sc(lbl,val,ch,cls){
+  return '<div class="sc"><div class="sl">'+lbl+'</div><div class="sv">'+val+'</div><div class="sch '+cls+'">'+ch+'</div></div>';}
+function badge(t,c){return '<span class="badge '+c+'">'+t+'</span>';}
+function row(cells){return '<tr>'+cells.map(function(c){return '<td>'+c+'</td>';}).join('')+'</tr>';}
+function chartBars(vals,max){
+  var months=['J','F','M','A','M','J','J','A','S','O','N','D'];
+  return '<div class="mini-chart">'+vals.map(function(v,i){
+    var h=Math.round(v/max*62)+8;
+    return '<div class="bw"><div class="bar" style="height:'+h+'px;"></div><div class="bl2">'+months[i]+'</div></div>';
+  }).join('')+'</div>';}
+function inv(n,q,s){
+  return '<div style="background:var(--bg);border-radius:8px;padding:12px;text-align:center;">'+
+  '<div style="font-size:12px;font-weight:600;">'+n+'</div>'+
+  '<div style="font-size:15px;font-weight:700;color:var(--g);margin:3px 0;">'+q+'</div>'+
+  '<div style="font-size:11px;">'+s+'</div></div>';}
+function qbmap(t,d){
+  return '<div style="background:var(--bg);border-radius:8px;padding:12px;">'+
+  '<div style="font-size:12px;font-weight:600;margin-bottom:3px;">'+t+'</div>'+
+  '<div style="font-size:11px;color:var(--muted);">'+d+'</div></div>';}
+function fld(lbl,type){
+  return '<div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:3px;">'+lbl+'</label>'+
+  '<input type="'+type+'" style="width:100%;padding:7px 11px;border:1px solid var(--bdr);border-radius:7px;font-size:12px;font-family:inherit;" placeholder="'+lbl+'"/></div>';}
+function uploadForm(entryName,modName,fields,btnCls){
+  return '<div style="margin-bottom:16px;"><h2 style="font-family:\'DM Serif Display\',serif;font-size:20px;">Upload '+modName+' Data</h2></div>'+
+  '<div class="uz" onclick="uploadAnim(\'Uploading '+entryName+'\')">'+
+  '<div class="ui">📁</div><div class="ut">Drop your file here or click to browse</div>'+
+  '<div class="us">Accepts .xlsx, .csv — matches your current PantrySoft export format</div></div>'+
+  '<div class="rc"><div class="rsh">Or enter '+entryName.toLowerCase()+' manually</div>'+
+  '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">'+
+  fields.map(function(f){return fld(f,f==='Date'?'date':'text');}).join('')+
+  '</div><button class="btn '+btnCls+'" onclick="saveEntry(\''+modName+'\')">Save '+entryName+'</button></div>';}
+function genericReport(name,dtype,summary,btnCls){
+  return '<div style="margin-bottom:16px;"><h2 style="font-family:\'DM Serif Display\',serif;font-size:20px;">'+name+' · Reports</h2>'+
+  '<p style="font-size:12px;color:var(--muted);">'+summary+'</p></div>'+
+  '<div class="rc">'+
+  '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">'+
+  '<div><div style="font-size:14px;font-weight:600;margin-bottom:3px;">Generate '+name+' Report</div>'+
+  '<div style="font-size:12px;color:var(--muted);">Pulls all '+dtype+' for FY2025, formats YoY comparison.</div></div>'+
+  '<button class="btn '+btnCls+'" onclick="toast(\'🗒️\',\''+name+' report generated!\')">🗒️ Generate</button></div>'+
+  '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">'+
+  '<div style="background:var(--bg);border-radius:8px;padding:12px;text-align:center;">'+
+  '<div style="font-family:\'DM Serif Display\',serif;font-size:20px;color:var(--g);">FY2025</div><div style="font-size:11px;color:var(--muted);margin-top:2px;">Current Period</div></div>'+
+  '<div style="background:var(--bg);border-radius:8px;padding:12px;text-align:center;">'+
+  '<div style="font-family:\'DM Serif Display\',serif;font-size:20px;color:var(--g);">100%</div><div style="font-size:11px;color:var(--muted);margin-top:2px;">Data Complete</div></div>'+
+  '<div style="background:var(--bg);border-radius:8px;padding:12px;text-align:center;">'+
+  '<div style="font-family:\'DM Serif Display\',serif;font-size:20px;color:var(--g);">PDF</div><div style="font-size:11px;color:var(--muted);margin-top:2px;">Output Format</div></div>'+
+  '</div></div>';}
+function kpi2(lbl,fy25,fy24,ch){
+  return '<div style="background:#f8fbf8;border-radius:9px;padding:13px 15px;border:1px solid #e0ede2;">'+
+  '<div style="font-size:11px;color:var(--muted);margin-bottom:5px;">'+lbl+'</div>'+
+  '<div style="display:flex;align-items:baseline;justify-content:space-between;">'+
+  '<div style="font-size:17px;font-weight:700;color:var(--txt);">'+fy25+'</div>'+
+  '<div style="font-size:12px;font-weight:600;color:var(--g);">'+ch+'</div></div>'+
+  '<div style="font-size:10px;color:var(--muted);margin-top:2px;">Prior year: '+fy24+'</div></div>';}
+function frow(s,a,p){
+  return '<tr style="border-bottom:1px solid #f0f4f1;">'+
+  '<td style="padding:9px 12px;">'+s+'</td>'+
+  '<td style="padding:9px 12px;text-align:right;font-weight:600;color:var(--g);">'+a+'</td>'+
+  '<td style="padding:9px 12px;text-align:right;color:var(--muted);">'+p+'</td></tr>';}
+function pghl(icon,title,text){
+  return '<div style="display:flex;gap:12px;padding:12px;background:#fafbfa;border-radius:9px;border-left:3px solid var(--b);margin-bottom:8px;">'+
+  '<div style="font-size:18px;flex-shrink:0;margin-top:1px;">'+icon+'</div>'+
+  '<div><div style="font-size:13px;font-weight:600;margin-bottom:3px;">'+title+'</div>'+
+  '<div style="font-size:12px;color:var(--muted);line-height:1.6;">'+text+'</div></div></div>';}
+function brow(item,owner,due,status){
+  return '<tr style="border-bottom:1px solid #f0f4f1;">'+
+  '<td style="padding:9px 12px;font-weight:500;font-size:12px;">'+item+'</td>'+
+  '<td style="padding:9px 12px;font-size:12px;color:var(--muted);">'+owner+'</td>'+
+  '<td style="padding:9px 12px;font-size:12px;color:var(--muted);">'+due+'</td>'+
+  '<td style="padding:9px 12px;">'+badge(status,'bgo')+'</td></tr>';}
 </script>
 </body>
 </html>
